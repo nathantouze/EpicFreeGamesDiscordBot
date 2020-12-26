@@ -3,7 +3,10 @@ const Constants = require('./Constants');
 
 
 class EpicStore {
-    constructor() {}
+    constructor() {
+        this.prev_games = [];
+        this.prev_links = [];
+    }
 
     async getFreeGame() {
         let games;
@@ -17,6 +20,7 @@ class EpicStore {
                 links.push(this.getFreeGameUrl(games[i]));
         }
         this.prev_games = games;
+        this.prev_links = links;
         return links;
     }
 
@@ -25,7 +29,7 @@ class EpicStore {
     }
 
     isNewGame(game) {
-        for (let i = 0; i < this.prev_games; i++) {
+        for (let i = 0; i < this.prev_games.length; i++) {
             if (this.prev_games[i].id === game.id)
                 return false;
         }
@@ -37,6 +41,18 @@ class EpicStore {
             return false;
         else
             return true;
+    }
+
+    dumpPrevGames() {
+        this.prev_games.forEach(element => {
+            console.log(element.title + ' (' + element.id + ')');
+        });
+    }
+
+    dumpPrevLinks() {
+        this.prev_links.forEach(element => {
+            console.log(element);
+        });
     }
 }
 
