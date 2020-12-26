@@ -1,0 +1,25 @@
+{
+  "name": "epicsfreegamediscordbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nathantouze/EpicsFreeGameDiscordBot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nathantouze/EpicsFreeGameDiscordBot/issues"
+  },
+  "homepage": "https://github.com/nathantouze/EpicsFreeGameDiscordBot#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "discord.js": "^12.5.1",
+    "dotenv": "^8.2.0"
+  }
+}
