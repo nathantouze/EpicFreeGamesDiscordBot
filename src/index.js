@@ -56,8 +56,8 @@ async function sendFreeGameMessage(client, msg) {
 client.once('ready', async () => {
     var msg;
     console.log('Connected');
-    console.log(Constants.DISCORD_TOKEN);
-    console.log(Constants.EPIC_PRODUCT_STARTUP)
+    await sendFreeGameMessage(Constants.DISCORD_TOKEN);
+    await sendFreeGameMessage(Constants.EPIC_PRODUCT_STARTUP)
     while (1) {
         let date = new Date();
         
