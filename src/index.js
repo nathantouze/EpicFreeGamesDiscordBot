@@ -56,11 +56,10 @@ async function sendFreeGameMessage(client, msg) {
 client.once('ready', async () => {
     var msg;
     console.log('Connected');
-    await timer(10);
     while (1) {
         let date = new Date();
         
-        if (date.getUTCHours() === 1 && date.getUTCMinutes() === 35 && date.getUTCSeconds() === 1) {
+        if (date.getUTCHours() === 1 && date.getUTCMinutes() === 57 && date.getUTCSeconds() === 30) {
             let new_msg = await prepareFreeGameMessage(epic);
             if (new_msg === msg || new_msg == null) {
                 msg = new_msg;
