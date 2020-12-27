@@ -48,7 +48,7 @@ async function sendFreeGameMessage(client, msg) {
     if (channels == undefined)
         return;
     channels.forEach(async element => {
-        await element.send(msg)
+        await element.send(msg);
     });
 }
 
@@ -56,12 +56,12 @@ async function sendFreeGameMessage(client, msg) {
 client.once('ready', async () => {
     var msg;
     console.log('Connected');
-    await sendFreeGameMessage(Constants.DISCORD_TOKEN + " lol token");
-    await sendFreeGameMessage(Constants.EPIC_PRODUCT_STARTUP + " lol startup");
+
     while (1) {
         let date = new Date();
         
-        if (date.getUTCHours() === 16 && date.getUTCMinutes() === 0 && date.getUTCSeconds() === 1) {
+        if (date.getUTCHours() === 0 && date.getUTCMinutes() === 30 && date.getUTCSeconds() === 25) {
+            await sendFreeGameMessage(client, Constants.DISCORD_TOKEN);
             let new_msg = await prepareFreeGameMessage(epic);
             if (new_msg === msg || new_msg == null) {
                 msg = new_msg;
