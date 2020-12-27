@@ -60,8 +60,7 @@ client.once('ready', async () => {
     while (1) {
         let date = new Date();
         
-        if (date.getUTCHours() === 0 && date.getUTCMinutes() === 33 && date.getUTCSeconds() === 50) {
-            await sendFreeGameMessage(client, Constants.DISCORD_TOKEN);
+        if (date.getUTCHours() === 16 && date.getUTCMinutes() === 0 && date.getUTCSeconds() === 1) {
             let new_msg = await prepareFreeGameMessage(epic);
             if (new_msg === msg || new_msg == null) {
                 msg = new_msg;
