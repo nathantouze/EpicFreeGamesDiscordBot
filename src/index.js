@@ -1,13 +1,27 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-
+const mysql = require('mysql2/promise');
 const Constants = require('./classes/Constants');
+
 const EpicStore = require('./classes/EpicStore');
+
+global.db = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+    database: process.env.DB_DATABASE,
+    connectionLimit: 10,
+});
 
 var epic = new EpicStore();
 
-const timer = sec => new Promise( res => setTimeout(res, sec * 1000));
 
+/**
+ * Get all "general" channel from the list of servers that added this bot
+ * @param {Discord.Client} client 
+ * @returns 
+ */
 function getGeneralChannels(client) {
     let guilds = client.guilds.cache.array();
     let channels = [];
@@ -18,30 +32,27 @@ function getGeneralChannels(client) {
     return channels;
 }
 
+async function craftEpicGamesMessage() {
+    let games = await epic.getFreeGames();
+    var msg = games.length === 1 ? "Voici le jeu à récupérer sur l'Epic Games Store en ce moment :\n" : "Voici les jeux à récupérer sur l'Epic Games Store en ce moment :\n";
 
-function isJustStarted(links) {
-    if (links.find(link => link == Constants.EPIC_PRODUCT_STARTUP) == undefined)
-        return false;
-    return true;
-}
-
-
-async function prepareFreeGameMessage(epic) {
-    let links = await epic.getFreeGame();
-    var msg = links.length === 1 ? "Voici le jeu à récupérer sur l'Epic Games Store en ce moment :\n" : "Voici les jeux à récupérer sur l'Epic Games Store en ce moment :\n";
-
-    if (links.length === 0 || isJustStarted(links))
+    if (games.length === 0)
         return null;
-    else if (links.length === 1) {
-        msg += links[0];
+    else if (games.length === 1) {
+        msg += games[0];
     } else {
-        for (let i = 0; i < links.length; i++)
-            msg += "<" + links[i] + ">\n";
+        for (let i = 0; i < games.length; i++)
+            msg += "<" + games[i].getLink() + ">\n";
     }
     return msg;
 }
 
-
+/**
+ * Send a message to every servers that added this bot
+ * @param {Discord.Client} client 
+ * @param {String} msg 
+ * @returns 
+ */
 async function sendFreeGameMessage(client, msg) {
     let channels = getGeneralChannels(client);
 
@@ -52,25 +63,12 @@ async function sendFreeGameMessage(client, msg) {
     });
 }
 
+client.login(Constants.DISCORD_TOKEN);
 
 client.once('ready', async () => {
-    var msg;
     console.log('Connected');
-    while (1) {
-        let date = new Date();
-        
-        if (date.getUTCHours() === 1 && date.getUTCMinutes() === 57 && date.getUTCSeconds() === 30) {
-            let new_msg = await prepareFreeGameMessage(epic);
-            if (new_msg === msg || new_msg == null) {
-                msg = new_msg;
-                await timer(1);
-                continue;
-            }
-            await sendFreeGameMessage(client, new_msg);
-            await timer(1);
-            msg = new_msg;
-        }
+    let msg = await craftEpicGamesMessage();
+    if (msg) {
+        await sendFreeGameMessage(client, msg);
     }
 });
-
-client.login(Constants.DISCORD_TOKEN);

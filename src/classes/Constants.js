@@ -5,4 +5,8 @@ module.exports = Object.freeze({
     FREEGAMES_ENDPOINT: 'https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions',
     EPIC_PRODUCT_ENDPOINT: 'https://www.epicgames.com/store/fr/product',
     EPIC_PRODUCT_STARTUP: process.env.EPIC_PRODUCT_STARTUP ? process.env.EPIC_PRODUCT_STARTUP : null,
+    LAUNCHER: {
+        STEAM: 1,
+        EPIC: 2
+    }
 })
