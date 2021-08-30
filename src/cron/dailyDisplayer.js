@@ -1,9 +1,9 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const mysql = require('mysql2/promise');
-const Constants = require('./classes/Constants');
+const Constants = require('../classes/Constants');
 
-const EpicStore = require('./classes/EpicStore');
+const EpicStore = require('../classes/EpicStore');
 
 global.db = mysql.createPool({
     host: process.env.DB_HOST,
