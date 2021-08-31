@@ -66,7 +66,7 @@ async function sendFreeGameMessage(client, msg) {
 client.login(Constants.DISCORD_TOKEN);
 
 client.once('ready', async () => {
-    console.log('Connected');
+    console.log(new Date().toLocaleString() + ':', 'Connected');
     let msg = await craftEpicGamesMessage();
     if (msg) {
         await sendFreeGameMessage(client, msg);
