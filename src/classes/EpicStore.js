@@ -21,7 +21,7 @@ class EpicStore {
 
         let games_current = [];
         await this.cleanCurretlyFreeGames();
-        await axios.get(Constants.FREEGAMES_ENDPOINT).then((response) => {
+        await axios.get(Constants.EPIC_FREE_ENDPOINT).then((response) => {
             games_raw = response.data.data.Catalog.searchStore.elements;
         });
         for (let i = 0; i < games_raw.length; i++) {
