@@ -1,6 +1,7 @@
 const axios = require('axios').default;
 const Constants = require('./Constants');
 const Game = require('./Game');
+const Utils = require('../functions/utils');
 
 
 class EpicStore {
@@ -11,6 +12,9 @@ class EpicStore {
      * @returns {Promise<Game[]>}
      */
     async getFreeGames() {
+
+        Utils.log("Fetching the games given on the EPIC GAMES store...");
+
         let games_raw;
 
         let games_current_old = await Game.listAllCurrentGames(Constants.LAUNCHER.EPIC);
@@ -42,13 +46,16 @@ class EpicStore {
                     end
                 );
                 if (!current_old_ids.includes(games_raw[i].id)) {
+                    Utils.log("New game found");
                     await current.addToDatabase();
                     await current.addToCurrent();
                     games_current.push(current);
                 } else {
+                    Utils.log("Game found but already registered yesterday");
                     await current.InitIdFromItem();
                     await current.addToCurrent();
                 }
+                current.dump();
             }
         }
         return games_current;
@@ -109,6 +116,7 @@ class EpicStore {
 
 
     async cleanCurretlyFreeGames() {
+        Utils.log("Clearing the games of yesterday from the \"free_games_current\" table");
         const query = 'DELETE FGC FROM free_games_current FGC INNER JOIN free_games FG ON FGC.id_free_game = FG.id WHERE FG.id_launcher = ' + global.db.escape(Constants.LAUNCHER.EPIC);
         await global.db.query(query);
     }
