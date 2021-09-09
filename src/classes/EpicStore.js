@@ -107,7 +107,10 @@ class EpicStore {
             (game.productSlug === '[]' || !game.productSlug) ||
             (!game.price || !game.price.totalPrice) ||
             (!game.promotions || !game.promotions.promotionalOffers || 
-            game.promotions.promotionalOffers.length === 0)
+            game.promotions.promotionalOffers.length === 0 ||
+            game.promotions.promotionalOffers[0].promotionalOffers.length === 0 ||
+            !game.promotions.promotionalOffers[0].promotionalOffers[0].discountSettings ||
+            game.promotions.promotionalOffers[0].promotionalOffers[0].discountSettings.discountPercentage !== 0)
         ) {
             return false;
         }
