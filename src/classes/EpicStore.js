@@ -53,6 +53,7 @@ class EpicStore {
                 } else {
                     Utils.log("Game found but already registered yesterday");
                     await current.InitIdFromItem();
+                    await current.initFromId(current.getId());
                     await current.addToCurrent();
                 }
                 current.dump();
@@ -102,20 +103,10 @@ class EpicStore {
      * @returns {Boolean}
      */
     isValidStruct(game) {
-        if (
-            !game.title || !game.id ||
-            (game.productSlug === '[]' || !game.productSlug) ||
-            (!game.price || !game.price.totalPrice) ||
-            (!game.promotions || !game.promotions.promotionalOffers || 
-            game.promotions.promotionalOffers.length === 0 ||
-            game.promotions.promotionalOffers[0].promotionalOffers.length === 0 ||
-            !game.promotions.promotionalOffers[0].promotionalOffers[0].discountSettings ||
-            game.promotions.promotionalOffers[0].promotionalOffers[0].discountSettings.discountPercentage !== 0)
-        ) {
+        if (!(game.price && game.price.totalPrice && game.price.totalPrice.discountPrice === 0 && 
+            game.price.totalPrice.originalPrice > 0)) {
             return false;
         }
-        console.log("Found it !")
-        console.log(game)
         return true;
     }
 

@@ -5,12 +5,12 @@ class Game {
         this._id = null;
         this._label = label;
         this._id_launcher = id_launcher;
-        this._occurrence = null;
+        this._occurrence = 1;
         this._id_item = id_item;
         this._link = link;
         this._date_start = date_start;
         this._date_end = date_end;
-        this._date_creation = null;
+        this._date_creation = new Date();
     }
 
     getId() {
@@ -88,7 +88,7 @@ class Game {
         let [rows] = await global.db.query(query);
 
         if (rows.length > 0) {
-            Utils.log("This game was already present this the database. Adding an occurence...");
+            Utils.log("This game was already present this the database. Adding an occurrence...");
             query = 'UPDATE free_games SET ' + 
             'int_occurrence = ' + global.db.escape(rows[0].int_occurrence + 1) + ', ' + 
             'date_start = ' + global.db.escape(this.getDateStart()) + ', ' + 
@@ -97,7 +97,7 @@ class Game {
             await global.db.query(query);
             this._occurrence = rows[0].int_occurrence + 1;
             this._id = rows[0].id;
-            this._date_creation = new Date(rows[0].date_creation).toString();
+            this._date_creation = new Date(rows[0].date_creation);
         } else {
             Utils.log("First time the bot sees that game. Adding to the database...")
             query = 'INSERT INTO free_games (str_label, id_launcher, int_occurrence, id_item, str_link, date_start, date_end, date_creation) VALUES (' + 
@@ -112,7 +112,7 @@ class Game {
             let [rows] = await global.db.query(query);
             this._occurrence = 1;
             this._id = rows.insertId;
-            this._date_creation = new Date().toString();
+            this._date_creation = new Date();
         }
     }
 

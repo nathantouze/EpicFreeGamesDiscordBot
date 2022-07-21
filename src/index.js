@@ -39,7 +39,7 @@ async function craftEpicGamesMessage() {
     if (games.length === 0)
         return null;
     else if (games.length === 1) {
-        msg += games[0];
+        msg += games[0].getLink();
     } else {
         for (let i = 0; i < games.length; i++)
             msg += "<" + games[i].getLink() + ">\n";
@@ -71,5 +71,5 @@ client.once('ready', async () => {
     if (msg) {
         await sendFreeGameMessage(client, msg);
     }
-    process.exit();
+    //process.exit();
 });
