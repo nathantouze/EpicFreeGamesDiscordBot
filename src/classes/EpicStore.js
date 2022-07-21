@@ -114,6 +114,8 @@ class EpicStore {
         ) {
             return false;
         }
+        console.log("Found it !")
+        console.log(game)
         return true;
     }
 
