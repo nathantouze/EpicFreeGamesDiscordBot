@@ -94,7 +94,15 @@ class EpicStore {
      * @returns {String}
      */
     getFreeGameUrl(game) {
-        return Constants.EPIC_PRODUCT_ENDPOINT + '/' + game.productSlug;
+        if (game.productSlug != null) {
+            return Constants.EPIC_PRODUCT_ENDPOINT + '/' + game.productSlug;
+        } else if (Utils.isNonEmptyArray(game.offerMappings) && game.offerMappings[0].pageSlug != null) {
+            return Constants.EPIC_PRODUCT_ENDPOINT + '/' + game.offerMappings[0].pageSlug;
+        } else if (game.catalogNs != null && Utils.isNonEmptyArray(game.catalogNs.mappings) && game.catalogNs.mappings[0].pageSlug != null) {
+            return Constants.EPIC_PRODUCT_ENDPOINT + '/' + game.catalogNs.mappings[0].pageSlug;
+        } else {
+            return "Error";
+        }
     }
 
     /**

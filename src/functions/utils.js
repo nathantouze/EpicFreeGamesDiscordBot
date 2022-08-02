@@ -14,6 +14,23 @@ function getStoreLabel(id)  {
     }
 }
 
+/**
+ * Returns true if the passed element is an array with at least one element.
+ * @param {any} element 
+ * @returns {Boolean}
+ */
+function isNonEmptyArray(element) {
+    
+    if (element == null) {
+        return false;
+    }
+    if (typeof(element) == 'object' && element.length >= 1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -21,5 +38,6 @@ function sleep(ms) {
 module.exports = {
     log,
     getStoreLabel,
+    isNonEmptyArray,
     sleep
 }
