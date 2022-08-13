@@ -42,6 +42,7 @@ class EpicStore {
                     Constants.LAUNCHER.EPIC, 
                     games_raw[i].id, 
                     this.getFreeGameUrl(games_raw[i]),
+                    this.getFreeGameOgPrice(games_raw[i]),
                     start,
                     end
                 );
@@ -87,6 +88,23 @@ class EpicStore {
         }
         return [null, null];
     }
+
+
+    /**
+     * Gets the original price of the given game.
+     * @param {JSON} game 
+     * @returns {Number}
+     */
+    getFreeGameOgPrice(game) {
+        let og_price = game.price.totalPrice.originalPrice;
+
+        if (typeof(og_price) === 'number' && og_price > 0) {
+            return og_price / 100;
+        } else {
+            return 0;
+        }
+    }
+
 
     /**
      * Crafts the url of the game

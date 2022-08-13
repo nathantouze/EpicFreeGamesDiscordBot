@@ -1,13 +1,14 @@
 const Utils = require('../functions/utils');
 
 class Game {
-    constructor(label, id_launcher, id_item, link, date_start, date_end) {
+    constructor(label, id_launcher, id_item, link, og_price, date_start, date_end) {
         this._id = null;
         this._label = label;
         this._id_launcher = id_launcher;
         this._occurrence = 1;
         this._id_item = id_item;
         this._link = link;
+        this._og_price = og_price;
         this._date_start = date_start;
         this._date_end = date_end;
         this._date_creation = new Date();
@@ -37,6 +38,10 @@ class Game {
         return this._link;
     }
 
+    getOgPrice() {
+        return this._og_price;
+    }
+
     getDateStart() {
         return this._date_start;
     }
@@ -60,7 +65,7 @@ class Game {
     }
 
     async initFromId(id) {
-        const query = 'SELECT str_label, id_launcher, int_occurrence, id_item, str_link, date_end, date_start, date_creation FROM free_games WHERE id = ' + global.db.escape(id);
+        const query = 'SELECT str_label, id_launcher, int_occurrence, id_item, str_link, og_price, date_end, date_start, date_creation FROM free_games WHERE id = ' + global.db.escape(id);
 
         let [rows] = await global.db.query(query);
         if (rows.length > 0) {
@@ -70,6 +75,7 @@ class Game {
             this._occurrence = rows[0].int_occurrence;
             this._id_item = rows[0].id_item;
             this._link = rows[0].str_link;
+            this._og_price = rows[0].og_price;
             this._date_start = rows[0].date_start;
             this._date_end = rows[0].date_end;
             this._date_creation = rows[0].date_creation;
@@ -100,12 +106,13 @@ class Game {
             this._date_creation = new Date(rows[0].date_creation);
         } else {
             Utils.log("First time the bot sees that game. Adding to the database...")
-            query = 'INSERT INTO free_games (str_label, id_launcher, int_occurrence, id_item, str_link, date_start, date_end, date_creation) VALUES (' + 
+            query = 'INSERT INTO free_games (str_label, id_launcher, int_occurrence, id_item, str_link, og_price, date_start, date_end, date_creation) VALUES (' + 
             global.db.escape(this.getLabel()) + ', ' + 
             global.db.escape(this.getIdLauncher()) + ', ' + 
             global.db.escape(1) + ', ' + 
             global.db.escape(this.getIdItem()) + ', ' + 
             global.db.escape(this.getLink()) + ', ' + 
+            global.db.escape(this.getOgPrice()) + ', ' +
             global.db.escape(this.getDateStart()) + ', ' + 
             global.db.escape(this.getDateEnd()) + ', ' + 
             'now())';
