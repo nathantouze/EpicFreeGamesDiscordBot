@@ -1,7 +1,6 @@
 const axios = require('axios').default;
 const Constants = require('./Constants');
 const Game = require('./Game');
-const { parser } = require('node-html-parser');
 
 
 class SteamStore {

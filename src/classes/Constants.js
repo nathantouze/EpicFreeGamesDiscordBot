@@ -10,5 +10,26 @@ module.exports = Object.freeze({
     LAUNCHER: {
         STEAM: 1,
         EPIC: 2
-    }
+    },
+    LOG_TYPE: {
+        ERROR: 'error',
+        NEW_GUILD: 'new_guild',
+        NEW_TEXT_CHANNEL: 'new_text_channel',
+        NEW_FREE_GAME: 'new_free_game',
+        COMMAND: 'command',
+        DL_LOG: 'logs_download',
+        OTHER: 'other',
+    },
+    COMMAND: ["total", "now", "list", "channel", "language", "help", "info"],
+    COMMAND_ID: {
+        NONE: 0,
+        TOTAL: 1,
+        NOW: 2,
+        LIST: 3,
+        CHANNEL: 4,
+        LANGUAGE: 5,
+        HELP: 6,
+        INFO: 7,
+    },
+    COMMAND_PREFIX: "!",
 })

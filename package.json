@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
     "daily": "node src/cron/dailyDisplayer.js",
-    "cleandb": "node src/cron/db_cleaner.js"
+    "cleandb": "node src/cron/db_cleaner.js",
+    "bot": "node src/bot.js"
   },
   "repository": {
     "type": "git",
@@ -21,10 +22,8 @@
   "homepage": "https://github.com/nathantouze/EpicsFreeGameDiscordBot#readme",
   "dependencies": {
     "axios": "^0.21.1",
-    "discord.js": "^12.5.1",
+    "discord.js": "^14.2.0",
     "dotenv": "^8.2.0",
-    "mysql2": "^2.3.0",
-    "node-html-parser": "^4.1.4",
-    "puppeteer": "^13.3.1"
+    "mysql2": "^2.3.0"
   }
 }

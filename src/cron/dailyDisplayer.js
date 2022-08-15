@@ -1,8 +1,12 @@
-const Discord = require('discord.js');
-const client = new Discord.Client();
+const { Client, GatewayIntentBits } = require('discord.js');
+const client = new Client({ 
+    intents: [
+        GatewayIntentBits.Guilds
+    ] 
+});
 const mysql = require('mysql2/promise');
-
 const Utils = require('../functions/utils');
+const DiscordUtils = require('../functions/discord_utils');
 const Constants = require('../classes/Constants');
 const EpicStore = require('../classes/EpicStore');
 
@@ -20,22 +24,6 @@ global.db = mysql.createPool({
 });
 
 var epic = new EpicStore();
-
-
-/**
- * Get all "general" channel from the list of servers that added this bot
- * @param {Discord.Client} client 
- * @returns 
- */
-function getGeneralChannels(client) {
-    let guilds = client.guilds.cache.array();
-    let channels = [];
-
-    guilds.forEach(element => {
-        channels.push(element.channels.cache.find(channel => channel.name == 'général' || channel.name == 'general'));
-    });
-    return channels;
-}
 
 async function craftEpicGamesMessage() {
     let games = await epic.getFreeGames();
@@ -58,7 +46,7 @@ async function craftEpicGamesMessage() {
  * @returns 
  */
 async function sendFreeGameMessage(client, msg) {
-    let channels = getGeneralChannels(client);
+    let channels = await DiscordUtils.getTextChannels(client);
 
     if (!Array.isArray(channels)) {
         return;
