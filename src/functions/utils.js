@@ -75,9 +75,9 @@ function slashFormatDate(date) {
  */
 function isCommand(msg) {
 
-    for (let i = 0; i < Constants.COMMAND.length; i++) {
-        if (msg.startsWith(Constants.COMMAND_PREFIX + Constants.COMMAND[i] + " ") || 
-        msg === Constants.COMMAND_PREFIX + Constants.COMMAND[i]) {
+    for (let i = 0; i < Constants.COMMANDS.cmd.length; i++) {
+        if (msg.startsWith(Constants.COMMANDS.prefix + Constants.COMMANDS.cmd[i].name + " ") || 
+        msg === Constants.COMMANDS.prefix + Constants.COMMANDS.cmd[i].name) {
             return i + 1;
         }
     }

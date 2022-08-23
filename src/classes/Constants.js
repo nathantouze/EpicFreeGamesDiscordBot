@@ -20,7 +20,54 @@ module.exports = Object.freeze({
         DL_LOG: 'logs_download',
         OTHER: 'other',
     },
-    COMMAND: ["total", "now", "list", "channel", "language", "help", "info"],
+
+    COMMANDS: {
+        prefix: "!",
+        cmd: [
+            {
+                name: "total",
+                proto: "!total",
+                description: "Affiche la somme totale (€) des jeux Epic Games donnés.",
+                inline: true,
+            },
+            {
+                name: "now",
+                proto: "!now",
+                description: "Affiche le (ou les) jeu donnés en ce moment sur l'Epic Games Store.",
+                inline: true,
+            },
+            {
+                name: "list",
+                proto: "!list [from] [to]",
+                description: "Liste les jeux donnés sur un temps donné. `from` et `to` sont des dates sous la forme jj/mm/aaaa.",
+                inline: true,
+            },
+            {
+                name: "channel",
+                proto: "!channel CHANNEL_ID",
+                description: "Change le channel d'envois de la notification de jeu gratuit (Admin).",
+                inline: true,
+            },
+            {
+                name: "language",
+                proto: "!language en|fr",
+                description: "Permet de changer la langue du bot (Admin).",
+                inline: true
+            },
+            {
+                name: "help",
+                proto: "!help",
+                description: "Affiche le message d'aide des commandes.",
+                inline: true,
+            },
+            {
+                name: "info",
+                proto: "!info GAME_ID",
+                description: "Affiche les informations du jeu relatives au bot.",
+                inline: true,
+            }
+        ]
+    },
     COMMAND_ID: {
         NONE: 0,
         TOTAL: 1,
@@ -31,5 +78,4 @@ module.exports = Object.freeze({
         HELP: 6,
         INFO: 7,
     },
-    COMMAND_PREFIX: "!",
 })

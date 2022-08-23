@@ -58,8 +58,17 @@ async function logCommand(message) {
     await global.db.query(`INSERT INTO logs (type, text) VALUES (?, ?);`, [Constants.LOG_TYPE.COMMAND, `${message.author.username} sent "${message.content}" in guild #${message.guildId} and channel #${message.channelId}`]);
 }
 
+/**
+ * Register an error log in the database
+ * @param {String} txt 
+ */
+async function logError(txt) {
+    await global.db.query("INSERT INTO logs (type, text) VALUES (?, ?);", [Constants.LOG_TYPE.ERROR, txt]);
+}
+
 module.exports = {
     getAllGuilds,
     getTextChannels,
-    logCommand
+    logCommand,
+    logError
 }

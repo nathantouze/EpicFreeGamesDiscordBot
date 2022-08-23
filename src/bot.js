@@ -16,6 +16,8 @@ const cmd_channel = require('./commands/channel');
 const cmd_total = require('./commands/total');
 const cmd_now = require('./commands/now');
 const cmd_list = require('./commands/list');
+const cmd_help = require('./commands/help');
+const cmd_info = require('./commands/info');
 
 global.db = mysql.createPool({
     host: process.env.DB_HOST,
@@ -31,7 +33,7 @@ global.db = mysql.createPool({
 
 
 client.on('messageCreate', async (message) => {
-    
+
     switch (Utils.isCommand(message.content)) {
         case Constants.COMMAND_ID.CHANNEL: {
             logCommand(message);
@@ -51,6 +53,16 @@ client.on('messageCreate', async (message) => {
         case Constants.COMMAND_ID.LIST: {
             logCommand(message);
             await cmd_list(message);
+            break;
+        }
+        case Constants.COMMAND_ID.HELP: {
+            logCommand(message);
+            await cmd_help(message);
+            break;
+        }
+        case Constants.COMMAND_ID.INFO: {
+            logCommand(message);
+            await cmd_info(message);
             break;
         }
         default: {
