@@ -53,7 +53,7 @@ module.exports = Object.freeze({
             {
                 name: "language",
                 proto: "!language en|fr",
-                description: "Permet de changer la langue du bot (Admin).",
+                description: "Permet de changer la langue du bot (Admin). A venir",
                 inline: true
             },
             {
