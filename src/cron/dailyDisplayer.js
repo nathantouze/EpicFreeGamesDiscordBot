@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds
@@ -27,32 +27,47 @@ var epic = new EpicStore();
 
 async function craftEpicGamesMessage() {
     let games = await epic.getFreeGames();
-    var msg = games.length === 1 ? "Voici le jeu à récupérer sur l'Epic Games Store en ce moment :\n" : "Voici les jeux à récupérer sur l'Epic Games Store en ce moment :\n";
-
-    if (games.length === 0) {
-        return null;
-    }
+    let txt = '';
     for (let i = 0; i < games.length; i++) {
-        msg += "- " + games[i].getLabel() + ": <" + games[i].getPurchaseLink() + ">\n";
+        let link = '';
+        if (games[i].getNamespace() == '') {
+            link = games[i].getLink();
+        } else {
+            link = games[i].getPurchaseLink();
+        }
+        txt += games[i].getLabel() + ": [récupérer ici](" + link + ")" + (i < games.length - 1 ? '\n' : '');
     }
-    Utils.log("Message to be sent: \n\"" + msg + "\"");
-    return msg;
+    let title = (games.length === 1 ? "Jeu gratuit " : "Jeux gratuits ") + "à récupérer en ce moment sur l'Epic Games Store";
+    let embed = new EmbedBuilder();
+    embed.addFields([
+        {
+            name: title,
+            value: txt,
+            inline: false
+        }
+    ]);
+    embed.setColor(0x18e1ee);
+    embed.setTimestamp(Date.now());
+    Utils.log("Message to be sent: \n\"" + txt + "\"");
+    return embed;
 }
 
 /**
  * Send a message to every servers that added this bot
  * @param {Discord.Client} client 
- * @param {String} msg 
+ * @param {EmbedBuilder} embed 
  * @returns 
  */
-async function sendFreeGameMessage(client, msg) {
+async function sendFreeGameMessage(client, embed) {
     let channels = await DiscordUtils.getTextChannels(client);
 
     if (!Array.isArray(channels)) {
         return;
     }
     channels.forEach(async element => {
-        await element.send(msg);
+        await element.send({
+            embeds: [embed]
+        });
     });
     Utils.log("Message sent.");
 }
@@ -61,9 +76,9 @@ client.login(Constants.DISCORD_TOKEN);
 
 client.once('ready', async () => {
     Utils.log("Connected to the Discord bot !")
-    let msg = await craftEpicGamesMessage();
-    if (msg) {
-        await sendFreeGameMessage(client, msg);
+    let embed = await craftEpicGamesMessage();
+    if (embed) {
+        await sendFreeGameMessage(client, embed);
     }
     Utils.log("Done.");
     await Utils.sleep(3000);
