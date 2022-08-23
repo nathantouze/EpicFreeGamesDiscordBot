@@ -41,6 +41,7 @@ class EpicStore {
                     games_raw[i].title, 
                     Constants.LAUNCHER.EPIC, 
                     games_raw[i].id, 
+                    games_raw[i].namespace,
                     this.getFreeGameUrl(games_raw[i]),
                     this.getFreeGameOgPrice(games_raw[i]),
                     start,

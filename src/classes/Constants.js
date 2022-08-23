@@ -2,6 +2,8 @@ require('dotenv').config();
 
 module.exports = Object.freeze({
     DISCORD_TOKEN: process.env.DISCORD_TOKEN ? process.env.DISCORD_TOKEN : null,
+    EPIC_PURCHASE_1: "https://store.epicgames.com/purchase?highlightColor=000000&offers=1-",
+    EPIC_PURCHASE_2: "&orderId&purchaseToken#/purchase/payment-methods",
     EPIC_FREE_ENDPOINT: 'https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions',
     EPIC_PRODUCT_ENDPOINT: 'https://www.epicgames.com/store/fr/product',
     STEAMDB_FREE_ENDPOINT: 'https://steamdb.info/upcoming/free/',

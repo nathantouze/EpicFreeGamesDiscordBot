@@ -1,12 +1,14 @@
 const Utils = require('../functions/utils');
+const Constants = require('./Constants');
 
 class Game {
-    constructor(label, id_launcher, id_item, link, og_price, date_start, date_end) {
+    constructor(label, id_launcher, id_item, namespace, link, og_price, date_start, date_end) {
         this._id = null;
         this._label = label;
         this._id_launcher = id_launcher;
         this._occurrence = 1;
         this._id_item = id_item;
+        this._namespace = namespace;
         this._link = link;
         this._og_price = og_price;
         this._date_start = date_start;
@@ -34,8 +36,16 @@ class Game {
         return this._id_item;
     }
 
+    getNamespace() {
+        return this._namespace;
+    }
+
     getLink() {
         return this._link;
+    }
+
+    getPurchaseLink() {
+        return Constants.EPIC_PURCHASE_1 + this.getNamespace() + "-" + this.getIdItem() + Constants.EPIC_PURCHASE_2;
     }
 
     getOgPrice() {
@@ -55,8 +65,8 @@ class Game {
     }
 
     async InitIdFromItem() {
-        const query = 'SELECT id FROM free_games WHERE id_item = ' + global.db.escape(this.getIdItem());
-        let [rows] = await global.db.query(query);
+        const query = 'SELECT id FROM free_games WHERE id_item = ?;';
+        let [rows] = await global.db.query(query, [this.getIdItem()]);
 
         if (rows.length === 0) {
             return;
@@ -65,15 +75,16 @@ class Game {
     }
 
     async initFromId(id) {
-        const query = 'SELECT str_label, id_launcher, int_occurrence, id_item, str_link, og_price, date_end, date_start, date_creation FROM free_games WHERE id = ' + global.db.escape(id);
+        const query = 'SELECT str_label, id_launcher, int_occurrence, id_item, namespace, str_link, og_price, date_end, date_start, date_creation FROM free_games WHERE id = ?;';
 
-        let [rows] = await global.db.query(query);
+        let [rows] = await global.db.query(query, [id]);
         if (rows.length > 0) {
             this._id = id;
             this._label = rows[0].str_label;
             this._id_launcher = rows[0].id_launcher;
             this._occurrence = rows[0].int_occurrence;
             this._id_item = rows[0].id_item;
+            this._namespace = rows[0].namespace;
             this._link = rows[0].str_link;
             this._og_price = rows[0].og_price;
             this._date_start = rows[0].date_start;
@@ -90,37 +101,27 @@ class Game {
     * Add the object to the database
     */
     async addToDatabase() {
-        let query = 'SELECT id, int_occurrence, date_creation FROM free_games WHERE str_label = ' + global.db.escape(this.getLabel()) + ' AND id_launcher = ' + global.db.escape(this.getIdLauncher());
-        let [rows] = await global.db.query(query);
+        let query = 'SELECT id, int_occurrence, date_creation FROM free_games WHERE str_label = ? AND id_launcher = ?;';
+        let [rows] = await global.db.query(query, [this.getLabel(), this.getIdLauncher()]);
 
         if (rows.length > 0) {
             Utils.log("This game was already present this the database. Adding an occurrence...");
-            query = 'UPDATE free_games SET ' + 
-            'int_occurrence = ' + global.db.escape(rows[0].int_occurrence + 1) + ', ' + 
-            'date_start = ' + global.db.escape(this.getDateStart()) + ', ' + 
-            'date_end = ' + global.db.escape(this.getDateEnd()) + ' ' + 
-            'WHERE id = ' + global.db.escape(rows[0].id);
-            await global.db.query(query);
+            
+            query = "UPDATE free_games SET int_occurence = ?, id_item = ?, namespace = ? WHERE id = ?;";
+            await global.db.query(query, [rows[0].int_occurrence + 1, this.getIdItem(), this.getNamespace(), rows[0].id]);
             this._occurrence = rows[0].int_occurrence + 1;
             this._id = rows[0].id;
             this._date_creation = new Date(rows[0].date_creation);
         } else {
-            Utils.log("First time the bot sees that game. Adding to the database...")
-            query = 'INSERT INTO free_games (str_label, id_launcher, int_occurrence, id_item, str_link, og_price, date_start, date_end, date_creation) VALUES (' + 
-            global.db.escape(this.getLabel()) + ', ' + 
-            global.db.escape(this.getIdLauncher()) + ', ' + 
-            global.db.escape(1) + ', ' + 
-            global.db.escape(this.getIdItem()) + ', ' + 
-            global.db.escape(this.getLink()) + ', ' + 
-            global.db.escape(this.getOgPrice()) + ', ' +
-            global.db.escape(this.getDateStart()) + ', ' + 
-            global.db.escape(this.getDateEnd()) + ', ' + 
-            'now())';
-            let [rows] = await global.db.query(query);
+            Utils.log("First time the bot sees that game. Adding to the database...");
+            
+            query = "INSERT INTO free_games (str_label, id_launcher, int_occurrence, id_item, namespace, str_link, og_price, date_start, date_end) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+            let [rows] = await global.db.query(query, [this.getLabel(), this.getIdLauncher(), 1, this.getIdItem(), this.getNamespace(), this.getLink(), this.getOgPrice(), this.getDateStart(), this.getDateEnd()]);
             this._occurrence = 1;
             this._id = rows.insertId;
             this._date_creation = new Date();
         }
+        await global.db.query("INSERT INTO free_games_schedule (id_game, date_start, date_end) VALUES (?, ?, ?);", [this.getId(), this.getDateStart(), this.getDateEnd()]);
     }
 
 

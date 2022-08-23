@@ -33,7 +33,7 @@ async function craftEpicGamesMessage() {
         return null;
     }
     for (let i = 0; i < games.length; i++) {
-        msg += "<" + games[i].getLink() + ">\n";
+        msg += "- " + games[i].getLabel() + ": <" + games[i].getPurchaseLink() + ">\n";
     }
     Utils.log("Message to be sent: \n\"" + msg + "\"");
     return msg;

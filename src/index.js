@@ -25,13 +25,11 @@ async function craftEpicGamesMessage() {
     let games = await epic.getFreeGames();
     var msg = games.length === 1 ? "Voici le jeu à récupérer sur l'Epic Games Store en ce moment :\n" : "Voici les jeux à récupérer sur l'Epic Games Store en ce moment :\n";
 
-    if (games.length === 0)
+    if (games.length === 0) {
         return null;
-    else if (games.length === 1) {
-        msg += games[0].getLink();
-    } else {
-        for (let i = 0; i < games.length; i++)
-            msg += "<" + games[i].getLink() + ">\n";
+    }
+    for (let i = 0; i < games.length; i++) {
+        msg += "- " + games[i].getLabel() + ": <" + games[i].getPurchaseLink() + ">\n";
     }
     return msg;
 }
