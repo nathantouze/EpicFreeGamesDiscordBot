@@ -18,6 +18,7 @@ module.exports = Object.freeze({
         NEW_GUILD: 'new_guild',
         NEW_TEXT_CHANNEL: 'new_text_channel',
         NEW_FREE_GAME: 'new_free_game',
+        GUILD_KICK: 'guild_kick',
         COMMAND: 'command',
         DL_LOG: 'logs_download',
         OTHER: 'other',

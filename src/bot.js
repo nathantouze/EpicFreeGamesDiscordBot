@@ -30,6 +30,12 @@ global.db = mysql.createPool({
     Utils.log("Connected to the database !")
 });
 
+client.on('guildDelete', async (guild) => {
+    
+    await global.db.query('INSERT INTO logs (type, text) VALUES (?, ?);', [Constants.LOG_TYPE.GUILD_KICK, "Bot has been kicked from guild #" + guild.id]);
+    await global.db.query('DELETE FROM bot_guilds WHERE id_guild = ?;', [guild.id]);
+    await global.db.query('DELETE FROM bot_guilds_text_channel WHERE id_guild = ?;', [guild.id]);
+})
 
 client.on('guildCreate', async (guild) => {
     let raw_channels = guild.channels.cache;
