@@ -1,5 +1,6 @@
-const { Message, Client, Guild } = require("discord.js");
+const { Message, Client, PermissionsBitField } = require("discord.js");
 const Constants = require("../classes/Constants");
+const { logError } = require("../functions/discord_utils");
 
 
 /**
@@ -9,6 +10,12 @@ const Constants = require("../classes/Constants");
  * @returns {Promise<void>}
  */
 async function channel(client, message) {
+
+    if (!message.member.permissions.bitfield === PermissionsBitField.All) {
+        await logError("User not administrator.");
+        await message.reply({content: "Cette commande ne peut être utilisé que par les admins."});
+        return;
+    }
 
     let argv = message.content.split(' ');
 

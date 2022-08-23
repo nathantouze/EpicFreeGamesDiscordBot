@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, ChannelType } = require('discord.js');
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds,
@@ -31,6 +31,15 @@ global.db = mysql.createPool({
 });
 
 
+client.on('guildCreate', async (guild) => {
+    let raw_channels = guild.channels.cache;
+
+    let text_channels = raw_channels.filter(c => c.type === ChannelType.GuildText);
+    let default_channel = text_channels.at(0);
+    await global.db.query('INSERT INTO bot_guilds (str_label, id_guild) VALUES (?, ?);', [guild.name, guild.id]);
+    await global.db.query('INSERT INTO bot_guilds_text_channel (str_label, id_guild, id_channel, id_setup_user) VALUES (?, ?, ?, ?);', [default_channel.name, guild.id, default_channel.id, client.user.id]);
+    await global.db.query('INSERT INTO logs (type, text) VALUES (?, ?), (?, ?);', [Constants.LOG_TYPE.NEW_GUILD, "Joined guild #" + guild.id, Constants.LOG_TYPE.NEW_TEXT_CHANNEL, "Changed text channel to #" + default_channel.id]);
+});
 
 client.on('messageCreate', async (message) => {
 

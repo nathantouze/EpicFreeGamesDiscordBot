@@ -12,7 +12,7 @@ const Constants = require('../classes/Constants');
 
     for (let i = 0; i < rows.length; i++) {
         let tmp_guild = await client.guilds.fetch(rows[i].id_guild).catch(async () => {
-            await global.db.query(`INSERT INTO logs (type, txt) VALUES ('${Constants.LOG_TYPE.ERROR}', 'Unable to fetch guild #${rows[i].id_guild}');`);
+            await global.db.query(`INSERT INTO logs (type, text) VALUES ('${Constants.LOG_TYPE.ERROR}', 'Unable to fetch guild #${rows[i].id_guild}');`);
         });
         if (tmp_guild == null) {
             continue;
