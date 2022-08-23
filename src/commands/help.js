@@ -1,4 +1,5 @@
 const { Message, EmbedBuilder } = require('discord.js');
+const Constants = require('../classes/Constants');
 
 /**
  * Displays helper embed message
