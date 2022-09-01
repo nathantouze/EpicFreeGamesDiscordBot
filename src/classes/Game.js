@@ -107,7 +107,7 @@ class Game {
         if (rows.length > 0) {
             Utils.log("This game was already present this the database. Adding an occurrence...");
             
-            query = "UPDATE free_games SET int_occurence = ?, id_item = ?, namespace = ? WHERE id = ?;";
+            query = "UPDATE free_games SET int_occurrence = ?, id_item = ?, namespace = ? WHERE id = ?;";
             await global.db.query(query, [rows[0].int_occurrence + 1, this.getIdItem(), this.getNamespace(), rows[0].id]);
             this._occurrence = rows[0].int_occurrence + 1;
             this._id = rows[0].id;
