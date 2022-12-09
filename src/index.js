@@ -8,6 +8,7 @@ const mysql = require('mysql2/promise');
 const Constants = require('./classes/Constants');
 const EpicStore = require('./classes/EpicStore');
 const DiscordUtils = require('./functions/discord_utils');
+const Utils = require('./functions/utils');
 
 global.db = mysql.createPool({
     host: process.env.DB_HOST,
@@ -23,6 +24,9 @@ var epic = new EpicStore();
 
 async function craftEpicGamesMessage() {
     let games = await epic.getFreeGames();
+    if (!Array.isArray(games) || games.length === 0) {
+        return null;
+    }
     let txt = '';
     for (let i = 0; i < games.length; i++) {
         let link = '';
@@ -74,6 +78,8 @@ client.once('ready', async () => {
     let embed = await craftEpicGamesMessage();
     if (embed) {
         await sendFreeGameMessage(client, embed);
+    } else {
+        Utils.log("No message to send");
     }
-    //process.exit();
+    process.exit();
 });
