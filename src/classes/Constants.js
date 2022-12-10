@@ -2,6 +2,7 @@ require('dotenv').config();
 
 module.exports = Object.freeze({
     DISCORD_TOKEN: process.env.DISCORD_TOKEN ? process.env.DISCORD_TOKEN : null,
+    DISCORD_BOT_OWNER: process.env.DISCORD_BOT_OWNER ? process.env.DISCORD_BOT_OWNER : null,
     EPIC_PURCHASE_1: "https://store.epicgames.com/purchase?highlightColor=000000&offers=1-",
     EPIC_PURCHASE_2: "&orderId&purchaseToken#/purchase/payment-methods",
     EPIC_FREE_ENDPOINT: 'https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions',
@@ -24,49 +25,64 @@ module.exports = Object.freeze({
         OTHER: 'other',
     },
 
+    COMMAND_DM: {
+        prefix: "!",
+        cmd: [
+            {
+                name: "changelog",
+                proto: "!changelog [push|check]",
+                description: `CMD_DM_CHANGELOG_DESC`,
+                inline: true,
+            },
+        ]
+    },
+    COMMAND_DM_ID: {
+        NONE: 0,
+        CHANGELOG: 1,
+    },
     COMMANDS: {
         prefix: "!",
         cmd: [
             {
                 name: "total",
                 proto: "!total",
-                description: "Affiche la somme totale (€) des jeux Epic Games donnés.",
+                description: `CMD_TOTAL_DESC`,
                 inline: true,
             },
             {
                 name: "now",
                 proto: "!now",
-                description: "Affiche le (ou les) jeu donnés en ce moment sur l'Epic Games Store.",
+                description: `CMD_NOW_DESC`,
                 inline: true,
             },
             {
                 name: "list",
                 proto: "!list [from] [to]",
-                description: "Liste les jeux donnés sur un temps donné. `from` et `to` sont des dates sous la forme jj/mm/aaaa.",
+                description: `CMD_LIST_DESC`,
                 inline: true,
             },
             {
                 name: "channel",
                 proto: "!channel CHANNEL_ID",
-                description: "Change le channel d'envois de la notification de jeu gratuit (Admin).",
+                description: `CMD_CHANNEL_DESC`,
                 inline: true,
             },
             {
                 name: "language",
                 proto: "!language en|fr",
-                description: "Permet de changer la langue du bot (Admin). A venir",
+                description: `CMD_LANGUAGE_DESC`,
                 inline: true
             },
             {
                 name: "help",
-                proto: "!help",
-                description: "Affiche le message d'aide des commandes.",
+                proto: "!help [dm]",
+                description: `CMD_HELP_DESC`,
                 inline: true,
             },
             {
                 name: "info",
                 proto: "!info GAME_ID",
-                description: "Affiche les informations du jeu relatives au bot.",
+                description: `CMD_INFO_DESC`,
                 inline: true,
             }
         ]

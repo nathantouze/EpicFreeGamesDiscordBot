@@ -13,18 +13,18 @@ async function info(message) {
     let argv = message.content.split(' ');
 
     if (argv.length != 2) {
-        await message.reply({content: "Veuillez préciser l'ID du jeu concerné."});
+        await message.reply({content: global.i18n.__("ENTER_GAME_ID")});
         return;
     }
     if (isNaN(argv[1])) {
-        await message.reply({content: "L'argument donné n'est pas valide."});
+        await message.reply({content: global.i18n.__("ERROR_ARG")});
         return;
     }
 
     let [rows] = await global.db.query("SELECT g.id_item, g.namespace, g.str_label, g.str_link, g.og_price, gs.date_start, gs.date_end FROM free_games AS g INNER JOIN free_games_schedule AS gs ON gs.id_game = g.id WHERE g.id = ?;", [argv[1]]);
     if (rows == null || rows.length == 0) {
         await logError("The game id does not exist (info command).");
-        await message.reply({content: "L'ID donné n'existe pas."});
+        await message.reply({content: global.i18n.__("ERROR_ID_404")});
         return;
     }
 
@@ -43,17 +43,17 @@ async function info(message) {
     .setColor(0x18e1ee)
     .addFields([
         {
-            name: "Prix d'origine",
+            name: global.i18n.__("OG_PRICE"),
             value: "" + rows[0].og_price + "€",
             inline: false
         },
         {
-            name: "Périodes de gratuité",
+            name: global.i18n.__("FREE_PERIODS"),
             value: occurences_txt,
             inline: false,
         },
         {
-            name: 'Lien d\'achat',
+            name: global.i18n.__("PURCHASE_LINK"),
             value: Constants.EPIC_PURCHASE_1 + rows[0].namespace + "-" + rows[0].id_item + Constants.EPIC_PURCHASE_2,
             inline: false
         }

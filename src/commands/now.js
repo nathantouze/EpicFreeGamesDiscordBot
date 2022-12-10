@@ -13,7 +13,7 @@ async function now(message) {
 
     if (rows.length === 0) {
         await global.db.query(`INSERT INTO logs (type, text) VALUES (?, ?);`, [Constants.LOG_TYPE.ERROR, `No current free game to show`]);
-        await message.reply({content: "Aucun jeu gratuit à récupérer en ce moment"});
+        await message.reply({content: global.i18n.__("NO_FREE_GAME_TITLE")});
         return;
     }
     let txt = '';
@@ -24,9 +24,9 @@ async function now(message) {
         } else {
             link = Constants.EPIC_PURCHASE_1 + rows[i].namespace + '-' + rows[i].id_item + Constants.EPIC_PURCHASE_2;
         }
-        txt += rows[i].str_label + ": [récupérer ici](" + link + ")" + (i < rows.length - 1 ? '\n' : '');
+        txt += rows[i].str_label + `: [${global.i18n.__("GET_HERE")}](${link})` + (i < rows.length - 1 ? '\n' : '');
     }
-    let title = (rows.length === 1 ? "Jeu gratuit " : "Jeux gratuits ") + "à récupérer en ce moment sur l'Epic Games Store";
+    let title = rows.length === 1 ? global.i18n.__("FREE_GAME_TITLE") : global.i18n.__("FREE_GAMES_TITLE");
     let embed = new EmbedBuilder();
     embed.addFields([
         {

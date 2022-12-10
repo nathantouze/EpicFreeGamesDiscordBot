@@ -3,3 +3,5 @@ package-lock.json
 node_modules
 sample_response*
 TODO
+tmp
+changelogs

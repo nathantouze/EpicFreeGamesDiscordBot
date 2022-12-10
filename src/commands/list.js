@@ -33,14 +33,14 @@ function error_in_args(argv) {
  */
 function makeTxt(games, from=null, to=null) {
 
-    let txt = "Voici la liste des jeux donnés";
+    let txt = global.i18n.__("FREE_GAMES_LIST");
 
     if (from == null) {
-        txt += " depuis la création du store:\n";
+        txt += global.i18n.__("FREE_GAMES_LIST_2") + ":\n";
     } else if (from != null && to == null) {
-        txt += " depuis le " + slashFormatDate(from) + ":\n";
+        txt += global.i18n.__("FREE_GAMES_FROM") + slashFormatDate(from) + ":\n";
     } else {
-        txt += " depuis le " + slashFormatDate(from) + " jusqu'au " + slashFormatDate(to) + ":\n";
+        txt += global.i18n.__("FREE_GAMES_FROM") + slashFormatDate(from) + global.i18n.__("FREE_GAMES_TO") + slashFormatDate(to) + ":\n";
     }
 
     if (games.length > 10) {
