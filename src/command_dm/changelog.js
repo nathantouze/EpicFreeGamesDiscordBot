@@ -25,7 +25,6 @@ async function changelog(client, message) {
         return;
     }
     
-    console.log(message.content);
     if (message.content === Constants.COMMAND_DM.prefix + "changelog") {
         if (message.attachments.size === 0) {
             await message.channel.send("No attachment");
@@ -50,7 +49,7 @@ async function changelog(client, message) {
                 message.channel.send("Error: No channel found. Unable to send changelog to any channel.");
                 return;
             }
-            let announcement = "New update: \n\n" + lastContent;
+            let announcement = global.i18n.__("NEW_UPDATE") + ": \n\n" + lastContent;
             channels.forEach(async element => {
                 await element.send({
                     content: announcement

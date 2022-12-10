@@ -34,11 +34,25 @@ module.exports = Object.freeze({
                 description: `CMD_DM_CHANGELOG_DESC`,
                 inline: true,
             },
+            {
+                name: "language",
+                proto: "!language en|fr",
+                description: `CMD_DM_LANGUAGE_DESC`,
+                inline: true,
+            },
+            {
+                name: "help",
+                proto: "!help [dm]",
+                description: `CMD_HELP_DESC`,
+                inline: true,
+            }
         ]
     },
     COMMAND_DM_ID: {
         NONE: 0,
         CHANGELOG: 1,
+        LANGUAGE: 2,
+        HELP: 3,
     },
     COMMANDS: {
         prefix: "!",

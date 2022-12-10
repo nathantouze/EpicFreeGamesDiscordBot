@@ -28,6 +28,7 @@
 	"ONLY_ADMIN": "Seul un administrateur peut utiliser cette commande.",
 	"ENTER_CHANNEL_ID": "Veuillez entrer l'ID du channel concerné.",
     "NEW_CHANNEL": "Le channel d'info des jeux gratuits est maintenant ",
+	"NEW_UPDATE": "Nouvelle mise à jour",
 	"CMD_TOTAL_DESC": "Affiche la somme totale (€) des jeux Epic Games donnés.",
 	"CMD_NOW_DESC": "Affiche le(s) jeu(x) gratuit(s) actuel(s).",
 	"CMD_LIST_DESC": "Liste les jeux donnés sur un temps donné. `from` et `to` sont des dates sous la forme jj/mm/aaaa.",
@@ -36,5 +37,5 @@
 	"CMD_HELP_DESC": "Affiche la liste des commandes. Si \"dm\" est spécifié, la liste des commandes en message privé sera affichée.",
 	"CMD_INFO_DESC": "Affiche les informations du jeu relatives au bot. ID disponible avec la commande `list`.",
 	"CMD_DM_CHANGELOG_DESC": "Gère les dernières modifications apportées au bot. \"check\" pour vérifier le message de changelog, \"push\" pour l'envoyez sur tous les channels de notification. (Owner)",
-	"ENTER_ID_CHANNEL": "ENTER_ID_CHANNEL"
+    "CMD_DM_LANGUAGE_DESC": "Change la langue du bot (messages privés uniquement)."
 }

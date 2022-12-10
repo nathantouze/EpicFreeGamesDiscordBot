@@ -1,7 +1,6 @@
 const { Message, Client, PermissionsBitField, ChannelType } = require("discord.js");
-const Constants = require("../classes/Constants");
 const { logError } = require("../functions/discord_utils");
-
+const Guild = require("../classes/Guild");
 
 /**
  * !channel command to change the text channel to send free games updates
@@ -20,7 +19,7 @@ async function channel(client, message) {
     let argv = message.content.split(' ');
 
     if (argv.length < 2) {
-        await message.reply({content: global.i18n.__("ENTER_CHANNEL_ID") /*"Veuillez préciser l'ID du channel concerné."*/});
+        await message.reply({content: global.i18n.__("ENTER_CHANNEL_ID")});
         return;
     }
     if (isNaN(argv[1])) {
@@ -36,7 +35,12 @@ async function channel(client, message) {
         await message.reply({content: global.i18n.__("ERROR_CHANNEL_TYPE")});
         return;
     }
-    await global.db.query(`UPDATE bot_guilds_text_channel SET id_channel = ?, id_setup_user = ?, str_label = ? WHERE id_guild = ?;`, [channel.id, message.author.id, channel.name, guild.id]);
+    let thisGuild = new Guild(message.guildId);
+    if (!await thisGuild.init(guild.id)) {
+        await message.reply({content: global.i18n.__("ERROR_ID_404")});
+        return;
+    }
+    await thisGuild.updateTextChannel(channel.name, channel.id, message.author.id);
     await message.reply({content: global.i18n.__("NEW_CHANNEL") + `<#${channel.id}>`});
 }
 

@@ -1,8 +1,8 @@
 const { Message } = require('discord.js');
 const fs = require('fs');
 
-const { slashFormatDate } = require('../functions/utils');
-const Utils = require('../functions/utils');
+const { slashFormatDate, dateToDateTime, initDateFromEUString } = require('../functions/date');
+const { replaceAll } = require('../functions/stringManagement');
 
 
 /**
@@ -12,8 +12,8 @@ const Utils = require('../functions/utils');
  */
 function error_in_args(argv) {
     
-    let from = argv.length >= 2 ? Utils.initDateFromEUString(argv[1]) : null;
-    let to = argv.length >= 3 ? Utils.initDateFromEUString(argv[2]) : null;
+    let from = argv.length >= 2 ? initDateFromEUString(argv[1]) : null;
+    let to = argv.length >= 3 ? initDateFromEUString(argv[2]) : null;
 
     if ((from != null && isNaN(from.valueOf())) || (to != null && isNaN(to.valueOf()))) {
         return true;
@@ -65,9 +65,9 @@ function makeQuery(from=null, to=null) {
     if (from == null && to == null) {
         return "SELECT id, str_label, str_link FROM free_games ORDER BY date_start ASC;";
     } else if (from != null && to == null) {
-        return "SELECT id, str_label, str_link FROM free_games WHERE date_start > '" + Utils.dateToDateTime(from) + "' ORDER BY date_start ASC;";
+        return "SELECT id, str_label, str_link FROM free_games WHERE date_start > '" + dateToDateTime(from) + "' ORDER BY date_start ASC;";
     } else {
-        return "SELECT id, str_label, str_link FROM free_games WHERE date_start BETWEEN '" + Utils.dateToDateTime(from) + "' AND '" + Utils.dateToDateTime(to) + "' ORDER BY date_start ASC;";
+        return "SELECT id, str_label, str_link FROM free_games WHERE date_start BETWEEN '" + dateToDateTime(from) + "' AND '" + dateToDateTime(to) + "' ORDER BY date_start ASC;";
     }
 }
 
@@ -85,7 +85,7 @@ async function sendList(message, from=null, to=null) {
 
     if (rows.length > 10) {
         let dateTxt = slashFormatDate(new Date());
-        dateTxt = Utils.replaceAll(dateTxt, "/", "-");
+        dateTxt = replaceAll(dateTxt, "/", "-");
         fs.writeFileSync("tmp/list-" + dateTxt + ".txt", txt);
         await message.reply({files: [{
             attachment: "./tmp/list-" + dateTxt + ".txt",
@@ -109,9 +109,9 @@ async function list(message) {
     if (argv.length == 1 || error_in_args(argv)) {
         await sendList(message);
     } else if (argv.length == 2) {
-        await sendList(message, Utils.initDateFromEUString(argv[1]));
+        await sendList(message, initDateFromEUString(argv[1]));
     } else {
-        await sendList(message, Utils.initDateFromEUString(argv[1]), Utils.initDateFromEUString(argv[2]));
+        await sendList(message, initDateFromEUString(argv[1]), initDateFromEUString(argv[2]));
     }
 }
 

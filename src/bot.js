@@ -14,11 +14,20 @@ const client = new Client({
 const mysql = require('mysql2/promise');
 const { I18n } = require('i18n');
 
-const { logCommand } = require('./functions/discord_utils');
+const { logCommand, getDMUserFromDB, addDmUserToDB, logError, logCommandDM } = require('./functions/discord_utils');
+
+const { isCommand, isCommandDM } = require('./functions/commands');
 const Utils = require('./functions/utils');
 const Constants = require('./classes/Constants');
 
+
+
+const Guild = require('./classes/Guild');
+const User = require('./classes/User');
+
+// Load commands
 const cmd_dm_changelog = require('./command_dm/changelog');
+const cmd_dm_language = require('./command_dm/language');
 
 const cmd_channel = require('./commands/channel');
 const cmd_total = require('./commands/total');
@@ -39,84 +48,73 @@ global.db = mysql.createPool({
     Utils.log("Connected to the database !")
 });
 
-client.on('guildDelete', async (guild) => {
-    
-    await global.db.query('INSERT INTO logs (type, text) VALUES (?, ?);', [Constants.LOG_TYPE.GUILD_KICK, "Bot has been kicked from guild #" + guild.id]);
-    await global.db.query('DELETE FROM bot_guilds WHERE id_guild = ?;', [guild.id]);
-    await global.db.query('DELETE FROM bot_guilds_text_channel WHERE id_guild = ?;', [guild.id]);
-})
 
-client.on('guildCreate', async (guild) => {
-    let raw_channels = guild.channels.cache;
-
-    let text_channels = raw_channels.filter(c => c.type === ChannelType.GuildText);
-    let default_channel = text_channels.at(0);
-    await global.db.query('INSERT INTO bot_guilds (str_label, id_guild, language) VALUES (?, ?, ?);', [guild.name, guild.id, 'en']);
-    await global.db.query('INSERT INTO bot_guilds_text_channel (str_label, id_guild, id_channel, id_setup_user) VALUES (?, ?, ?, ?);', [default_channel.name, guild.id, default_channel.id, client.user.id]);
-    await global.db.query('INSERT INTO logs (type, text) VALUES (?, ?), (?, ?);', [Constants.LOG_TYPE.NEW_GUILD, "Joined guild #" + guild.id, Constants.LOG_TYPE.NEW_TEXT_CHANNEL, "Changed text channel to #" + default_channel.id]);
-});
-
-
-client.on('messageCreate', async (message) => {
-
-    if (message.author.bot) {
-        return;
+/**
+ * Handle every possible DM commands
+ * @param {Message} message 
+ * @returns 
+ */
+async function handleDMCommands(message) {
+    let user = new User();
+    if (!await user.init(message.author.id)) {
+        await user.create(message.author.id, message.author.username + "#" + message.author.discriminator, 'en');
     }
-    if (message.channel.type === ChannelType.DM) {
-        switch (Utils.isCommandDM(message.content)) {
-            case Constants.COMMAND_DM_ID.CHANGELOG: {
-                await cmd_dm_changelog(client, message);
-                break;
-            }
-            default: {
-                break;
-            }
+
+    global.i18n.setLocale(user.language);
+    switch (isCommandDM(message.content)) {
+        case Constants.COMMAND_DM_ID.CHANGELOG: {
+            await cmd_dm_changelog(client, message);
+            break;
         }
-        return;
+        case Constants.COMMAND_DM_ID.LANGUAGE: {
+            await cmd_dm_language(message, user.toJSON().id_user);
+            break;
+        }
+        case Constants.COMMAND_DM_ID.HELP: {
+            await cmd_help(message);
+            break;
+        }
+        default: {
+            break;
+        }
     }
+    return;
+}
 
-    if (!Utils.isCommand(message.content)) {
-        return;
-    }
+
+async function handleGuildCommands(message) {
     let [rows] = await global.db.query('SELECT language FROM bot_guilds WHERE id_guild = ?;', [message.guild.id]);
     if (rows.length > 0) {
         global.i18n.setLocale(rows[0].language);
     } else {
         global.i18n.setLocale('en');
     }
-    switch (Utils.isCommand(message.content)) {
+    switch (isCommand(message.content)) {
         case Constants.COMMAND_ID.CHANNEL: {
-            logCommand(message);
             await cmd_channel(client, message);
             break;
         }
         case Constants.COMMAND_ID.TOTAL: {
-            logCommand(message);
             await cmd_total(message);
             break;
         }
         case Constants.COMMAND_ID.NOW: {
-            logCommand(message);
             await cmd_now(message);
             break;
         }
         case Constants.COMMAND_ID.LIST: {
-            logCommand(message);
             await cmd_list(message);
             break;
         }
         case Constants.COMMAND_ID.HELP: {
-            logCommand(message);
             await cmd_help(message);
             break;
         }
         case Constants.COMMAND_ID.INFO: {
-            logCommand(message);
             await cmd_info(message);
             break;
         }
         case Constants.COMMAND_ID.LANGUAGE: {
-            logCommand(message);
             await cmd_language(message);
             break;
         }
@@ -124,6 +122,63 @@ client.on('messageCreate', async (message) => {
             break;
         }
     }
+}
+
+
+client.on('guildDelete', async (guild) => {
+    
+    let thisGuild = new Guild();
+    if (!await thisGuild.init(guild.id)) {
+        await global.db.query('INSERT INTO logs (type, text) VALUES (?, ?);', [Constants.LOG_TYPE.ERROR, "Bot could not delete guild #" + guild.id]);
+        return;
+    }
+    await thisGuild.delete();
+    await global.db.query('INSERT INTO logs (type, text) VALUES (?, ?);', [Constants.LOG_TYPE.GUILD_KICK, "Bot has been kicked from guild #" + guild.id]);
+})
+
+client.on('guildCreate', async (guild) => {
+    let raw_channels = guild.channels.cache;
+
+    let text_channels = raw_channels.filter(c => c.type === ChannelType.GuildText);
+    let default_channel = text_channels.at(0);
+
+    let thisGuild = new Guild();
+    await thisGuild.create(guild.id, guild.name, default_channel.name, default_channel.id, client.user.id);
+    await global.db.query('INSERT INTO logs (type, text) VALUES (?, ?), (?, ?);', [Constants.LOG_TYPE.NEW_GUILD, "Joined guild #" + guild.id, Constants.LOG_TYPE.NEW_TEXT_CHANNEL, "Changed text channel to #" + default_channel.id]);
+});
+
+
+client.on('messageCreate', async (message) => {
+
+    // Ignore bot messages
+    if (message.author.bot) {
+        return;
+    }
+
+    // Private message handling
+    if (message.channel.type === ChannelType.DM) {
+        try {
+            await logCommandDM(message.content, message.author.username + "#" + message.author.discriminator);
+            await handleDMCommands(message);
+        } catch (e) {
+            Utils.log(e);
+            await logError(`Error while handling DM command ${global.db.escape(message.content)} from ${global.db.escape(message.author.username + "#" + message.author.discriminator)}`);
+        }
+        return;
+    }
+
+    // Guild message handling
+    if (isCommand(message.content)) {
+        try {
+            await logCommand(message);
+            await handleGuildCommands(message);
+        } catch (e) {
+            Utils.log(e);
+            await logError(`Error while handling command ${global.db.escape(message.content)} from ${global.db.escape(message.author.username + "#" + message.author.discriminator)} in guild ${global.db.escape(message.guild.name)}`);
+        }
+        return;
+    }
+    
 });
 
 global.i18n = new I18n({

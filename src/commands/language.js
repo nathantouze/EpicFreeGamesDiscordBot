@@ -16,15 +16,15 @@ async function language(message) {
 
     let argv = message.content.split(' ');
     if (argv.length < 2) {
-        await message.reply({content: global.i18n.__("ENTER_LANGUAGE") /*"Veuillez préciser la langue du bot."*/});
+        await message.reply({content: global.i18n.__("ENTER_LANGUAGE")});
         return;
     } else {
         if (argv[1] === "en" || argv[1] === "fr") {
             await global.db.query(`UPDATE bot_guilds SET language = ? WHERE id_guild = ?;`, [argv[1], message.guild.id]);
             global.i18n.setLocale(argv[1]);
-            await message.reply({content: global.i18n.__("LANGUAGE_CHANGED") /*"La langue du bot a été changée."*/});
+            await message.reply({content: global.i18n.__("LANGUAGE_CHANGED")});
         } else {
-            await message.reply({content: global.i18n.__("ERROR_LANGUAGE") /*"La langue du bot n'a pas pu être changée."*/});
+            await message.reply({content: global.i18n.__("ERROR_LANGUAGE")});
             return;
         }
     }

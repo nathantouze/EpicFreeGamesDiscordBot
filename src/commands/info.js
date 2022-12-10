@@ -1,7 +1,8 @@
 const { Message, EmbedBuilder } = require('discord.js');
 const Constants = require('../classes/Constants');
 const { logError } = require('../functions/discord_utils');
-const { slashFormatDate } = require('../functions/utils');
+
+const { slashFormatDate } = require('../functions/date');
 
 
 /**

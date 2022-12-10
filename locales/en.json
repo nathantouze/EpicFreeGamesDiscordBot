@@ -28,6 +28,7 @@
     "ONLY_ADMIN": "Only administrators can use this command.",
     "ENTER_CHANNEL_ID": "Please enter the ID of the channel",
     "NEW_CHANNEL": "The notification channel is now ",
+    "NEW_UPDATE": "New update",
     "CMD_TOTAL_DESC": "Displays the total amount (€) of the given games.",
     "CMD_NOW_DESC": "Displays the current free game(s).",
     "CMD_LIST_DESC": "List given games on a specified period. `from` and `to` are dates using the format dd/mm/yyyy.",
@@ -35,5 +36,6 @@
     "CMD_LANGUAGE_DESC": "Change bot language (Admin).",
     "CMD_HELP_DESC": "Displays the list of the commands. If \"dm\" is specified, the list of the private commands are shown.",
     "CMD_INFO_DESC": "Displays the game informations from the bot's database. The id can be found through the \"list\" command.",
-    "CMD_DM_CHANGELOG_DESC": "Manage last modifications made for the bot. \"check\" is used to check the notification message, \"push\" is used to send the notification to every guilds (servers). (Owner)"
+    "CMD_DM_CHANGELOG_DESC": "Manage last modifications made for the bot. \"check\" is used to check the notification message, \"push\" is used to send the notification to every guilds (servers). (Owner)",
+    "CMD_DM_LANGUAGE_DESC": "Change bot language (DM only)."
 }
