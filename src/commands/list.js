@@ -93,7 +93,7 @@ async function sendList(message, from=null, to=null) {
         }]});
         fs.rmSync("./tmp/list-" + dateTxt + ".txt");
     } else {
-        message.reply({content: txt});
+        await message.reply({content: txt});
     }
 
 }

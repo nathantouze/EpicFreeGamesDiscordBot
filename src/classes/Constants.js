@@ -3,6 +3,9 @@ require('dotenv').config();
 module.exports = Object.freeze({
     DISCORD_TOKEN: process.env.DISCORD_TOKEN ? process.env.DISCORD_TOKEN : null,
     DISCORD_BOT_OWNER: process.env.DISCORD_BOT_OWNER ? process.env.DISCORD_BOT_OWNER : null,
+    INVITE_LINK: process.env.DISCORD_BOT_INVITE_LINK ? process.env.DISCORD_BOT_INVITE_LINK : null,
+    FEEDBACK_EMAIL: process.env.FEEDBACK_EMAIL ? process.env.FEEDBACK_EMAIL : null,
+    FEEDBACK_EMAIL_PASSWORD: process.env.FEEDBACK_EMAIL_PASSWORD ? process.env.FEEDBACK_EMAIL_PASSWORD : null,
     EPIC_PURCHASE_1: "https://store.epicgames.com/purchase?highlightColor=000000&offers=1-",
     EPIC_PURCHASE_2: "&orderId&purchaseToken#/purchase/payment-methods",
     EPIC_FREE_ENDPOINT: 'https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions',
@@ -45,6 +48,18 @@ module.exports = Object.freeze({
                 proto: "!help [dm]",
                 description: `CMD_HELP_DESC`,
                 inline: true,
+            },
+            {
+                name: "invite",
+                proto: "!invite",
+                description: `CMD_INVITE_DESC`,
+                inline: true,
+            },
+            {
+                name: "feedback",
+                proto: "!feedback MESSAGE",
+                description: `CMD_FEEDBACK_DESC`,
+                inline: true,
             }
         ]
     },
@@ -53,6 +68,8 @@ module.exports = Object.freeze({
         CHANGELOG: 1,
         LANGUAGE: 2,
         HELP: 3,
+        INVITE: 4,
+        FEEDBACK: 5,
     },
     COMMANDS: {
         prefix: "!",
@@ -98,6 +115,18 @@ module.exports = Object.freeze({
                 proto: "!info GAME_ID",
                 description: `CMD_INFO_DESC`,
                 inline: true,
+            },
+            {
+                name: "invite",
+                proto: "!invite",
+                description: `CMD_INVITE_DESC`,
+                inline: true,
+            },
+            {
+                name: "feedback",
+                proto: "!feedback MESSAGE",
+                description: `CMD_FEEDBACK_DESC`,
+                inline: true,
             }
         ]
     },
@@ -110,5 +139,7 @@ module.exports = Object.freeze({
         LANGUAGE: 5,
         HELP: 6,
         INFO: 7,
+        INVITE: 8,
+        FEEDBACK: 9,
     },
 })

@@ -36,6 +36,8 @@ const cmd_list = require('./commands/list');
 const cmd_help = require('./commands/help');
 const cmd_info = require('./commands/info');
 const cmd_language = require('./commands/language');
+const cmd_invite = require('./commands/invite');
+const cmd_feedback = require('./commands/feedback');
 
 global.db = mysql.createPool({
     host: process.env.DB_HOST,
@@ -72,6 +74,14 @@ async function handleDMCommands(message) {
         }
         case Constants.COMMAND_DM_ID.HELP: {
             await cmd_help(message);
+            break;
+        }
+        case Constants.COMMAND_DM_ID.INVITE: {
+            await cmd_invite(message);
+            break;
+        }
+        case Constants.COMMAND_DM_ID.FEEDBACK: {
+            await cmd_feedback(message);
             break;
         }
         default: {
@@ -116,6 +126,14 @@ async function handleGuildCommands(message) {
         }
         case Constants.COMMAND_ID.LANGUAGE: {
             await cmd_language(message);
+            break;
+        }
+        case Constants.COMMAND_ID.INVITE: {
+            await cmd_invite(message);
+            break;
+        }
+        case Constants.COMMAND_ID.FEEDBACK: {
+            await cmd_feedback(message);
             break;
         }
         default: {

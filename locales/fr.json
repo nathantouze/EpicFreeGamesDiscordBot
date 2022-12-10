@@ -27,6 +27,8 @@
 	"COMMANDS_DM_LIST": "Liste des commandes disponibles en message privé",
 	"ONLY_ADMIN": "Seul un administrateur peut utiliser cette commande.",
 	"ENTER_CHANNEL_ID": "Veuillez entrer l'ID du channel concerné.",
+	"ERROR_FEEDBACK_NO_MSG": "Veulliez écrire un message.",
+    "FEEDBACK_SENT": "Feedback envoyé.",
     "NEW_CHANNEL": "Le channel d'info des jeux gratuits est maintenant ",
 	"NEW_UPDATE": "Nouvelle mise à jour",
 	"CMD_TOTAL_DESC": "Affiche la somme totale (€) des jeux Epic Games donnés.",
@@ -36,6 +38,8 @@
 	"CMD_LANGUAGE_DESC": "Change la langue du bot (Admin).",
 	"CMD_HELP_DESC": "Affiche la liste des commandes. Si \"dm\" est spécifié, la liste des commandes en message privé sera affichée.",
 	"CMD_INFO_DESC": "Affiche les informations du jeu relatives au bot. ID disponible avec la commande `list`.",
+	"CMD_INVITE_DESC": "Affiche le lien d'invitation du bot.",
+	"CMD_FEEDBACK_DESC": "Envoie un message de feedback au développeur.",
 	"CMD_DM_CHANGELOG_DESC": "Gère les dernières modifications apportées au bot. \"check\" pour vérifier le message de changelog, \"push\" pour l'envoyez sur tous les channels de notification. (Owner)",
     "CMD_DM_LANGUAGE_DESC": "Change la langue du bot (messages privés uniquement)."
 }

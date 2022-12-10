@@ -1,4 +1,4 @@
-const { Message, Client } = require('discord.js');
+const { Message, Client, EmbedBuilder } = require('discord.js');
 const Constants = require('../classes/Constants');
 const fs = require('fs');
 const axios = require('axios').default;
@@ -10,7 +10,7 @@ function getLastContent() {
     let files = fs.readdirSync('./changelogs');
     let lastFile = files[files.length - 1];
     let lastFileContent = fs.readFileSync('./changelogs/' + lastFile, 'utf8');
-    return lastFileContent;
+    return JSON.parse(lastFileContent);
 }
 
 /**
@@ -32,13 +32,13 @@ async function changelog(client, message) {
         }
         message.attachments.forEach(async (attachment) => {
     
-            if (!attachment.contentType.startsWith('text/plain')) {
+            if (!attachment.contentType.startsWith('application/json')) {
                 return;
             }
             let data = (await axios(attachment.url)).data;
             let changelogDate = new Date();
             let changelogDateStr = changelogDate.getFullYear() + '-' + (changelogDate.getMonth() + 1) + '-' + changelogDate.getDate();
-            fs.writeFileSync('./changelogs/changelog.' + changelogDateStr + '.txt', data);
+            fs.writeFileSync('./changelogs/changelog.' + changelogDateStr + '.json', JSON.stringify(data));
         });
     } else if (message.content.startsWith(Constants.COMMAND_DM.prefix + "changelog ")) {
         let cmd = message.content.split(' ')[1];
@@ -46,7 +46,7 @@ async function changelog(client, message) {
             let lastContent = getLastContent();
             let channels = await DiscordUtils.getTextChannels(client);
             if (!Array.isArray(channels)) {
-                message.channel.send("Error: No channel found. Unable to send changelog to any channel.");
+                await message.channel.send("Error: No channel found. Unable to send changelog to any channel.");
                 return;
             }
             let announcement = global.i18n.__("NEW_UPDATE") + ": \n\n" + lastContent;
@@ -57,7 +57,15 @@ async function changelog(client, message) {
             });
         } else if (cmd === "check") {
             let lastContent = getLastContent();
-            message.channel.send(lastContent);
+
+            let embed = new EmbedBuilder()
+            .setTitle(lastContent.title)
+            .setDescription(lastContent.description)
+            .setColor(0xbb2222)
+            .setTimestamp(Date.now())
+            .addFields(lastContent.fields);
+
+            await message.channel.send({embeds: [embed]});
         }
     }
     

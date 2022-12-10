@@ -27,6 +27,8 @@
     "COMMANDS_DM_LIST": "List of commands available in private message",
     "ONLY_ADMIN": "Only administrators can use this command.",
     "ENTER_CHANNEL_ID": "Please enter the ID of the channel",
+    "ERROR_FEEDBACK_NO_MSG": "Please enter a feedback.",
+    "FEEDBACK_SENT": "Feedback sent.",
     "NEW_CHANNEL": "The notification channel is now ",
     "NEW_UPDATE": "New update",
     "CMD_TOTAL_DESC": "Displays the total amount (€) of the given games.",
@@ -36,6 +38,8 @@
     "CMD_LANGUAGE_DESC": "Change bot language (Admin).",
     "CMD_HELP_DESC": "Displays the list of the commands. If \"dm\" is specified, the list of the private commands are shown.",
     "CMD_INFO_DESC": "Displays the game informations from the bot's database. The id can be found through the \"list\" command.",
+    "CMD_INVITE_DESC": "Displays the bot's invite link.",
+    "CMD_FEEDBACK_DESC": "Send a feedback to the bot's owner.",
     "CMD_DM_CHANGELOG_DESC": "Manage last modifications made for the bot. \"check\" is used to check the notification message, \"push\" is used to send the notification to every guilds (servers). (Owner)",
     "CMD_DM_LANGUAGE_DESC": "Change bot language (DM only)."
 }
