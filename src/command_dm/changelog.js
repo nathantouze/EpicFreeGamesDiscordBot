@@ -44,15 +44,22 @@ async function changelog(client, message) {
         let cmd = message.content.split(' ')[1];
         if (cmd === "push") {
             let lastContent = getLastContent();
+
+            let embed = new EmbedBuilder()
+            .setTitle(lastContent.title)
+            .setDescription(lastContent.description)
+            .setColor(0xbb2222)
+            .setTimestamp(Date.now())
+            .addFields(lastContent.fields);
             let channels = await DiscordUtils.getTextChannels(client);
             if (!Array.isArray(channels)) {
                 await message.channel.send("Error: No channel found. Unable to send changelog to any channel.");
                 return;
             }
-            let announcement = global.i18n.__("NEW_UPDATE") + ": \n\n" + lastContent;
             channels.forEach(async element => {
                 await element.send({
-                    content: announcement
+                    content: global.i18n.__("NEW_UPDATE") + ":",
+                    embeds: [embed]
                 });
             });
         } else if (cmd === "check") {
@@ -65,7 +72,10 @@ async function changelog(client, message) {
             .setTimestamp(Date.now())
             .addFields(lastContent.fields);
 
-            await message.channel.send({embeds: [embed]});
+            await message.channel.send({
+                content: global.i18n.__("NEW_UPDATE") + ":",
+                embeds: [embed]
+            });
         }
     }
     
