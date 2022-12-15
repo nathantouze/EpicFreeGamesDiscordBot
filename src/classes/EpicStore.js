@@ -36,6 +36,9 @@ class EpicStore {
                 if (games_raw[i].promotions) {
                     [start, end] = this.getPromoPeriod(games_raw[i].promotions);
                 }
+                if (!start || !end) {
+                    continue;
+                }
 
                 let current = new Game(
                     games_raw[i].title, 
@@ -130,11 +133,14 @@ class EpicStore {
      * @returns {Boolean}
      */
     isValidStruct(game) {
-        if (!(game.price && game.price.totalPrice && game.price.totalPrice.discountPrice === 0 && 
-            game.price.totalPrice.originalPrice > 0)) {
+        if (game.price && game.price.totalPrice && game.price.totalPrice.discountPrice === 0 && 
+        game.price.totalPrice.originalPrice > 0) {
+            return true;    
+        } else if (game.price && game.price.totalPrice && game.price.totalPrice.discountPrice === 0 && game.urlSlug.startsWith("mystery-game")) {
+            return true;
+        } else {
             return false;
         }
-        return true;
     }
 
 

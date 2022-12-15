@@ -9,7 +9,7 @@ const Utils = require('../functions/utils');
 const DiscordUtils = require('../functions/discord_utils');
 const Constants = require('../classes/Constants');
 const EpicStore = require('../classes/EpicStore');
-
+const { I18n } = require('i18n');
 
 
 global.db = mysql.createPool({
@@ -74,6 +74,12 @@ async function sendFreeGameMessage(client, embed) {
     });
     Utils.log("Message sent.");
 }
+
+global.i18n = new I18n({
+    locales: ['en', 'fr'],
+    directory: __dirname + '../../../locales',
+});
+global.i18n.setLocale('en');
 
 client.login(Constants.DISCORD_TOKEN);
 
