@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
+    "rm": "node src/cron/removeLast.js",
     "daily": "node src/cron/dailyDisplayer.js",
     "cleandb": "node src/cron/db_cleaner.js",
     "bot": "node src/bot.js"

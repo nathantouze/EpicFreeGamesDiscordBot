@@ -1,16 +1,18 @@
-const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, EmbedBuilder, GuildBasedChannel } = require('discord.js');
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds
     ] 
 });
+
 const mysql = require('mysql2/promise');
 const Utils = require('../functions/utils');
-const DiscordUtils = require('../functions/discord_utils');
-const Constants = require('../classes/Constants');
 const EpicStore = require('../classes/EpicStore');
+const DiscordUtils = require('../functions/discord_utils');
+const Game = require('../classes/Game');
+const Guild = require('../classes/Guild');
 const { I18n } = require('i18n');
-
+const Constants = require('../classes/Constants');
 
 global.db = mysql.createPool({
     host: process.env.DB_HOST,
@@ -25,12 +27,32 @@ global.db = mysql.createPool({
 
 var epic = new EpicStore();
 
-async function craftEpicGamesMessage() {
-    let games = await epic.getFreeGames();
-    if (!Array.isArray(games) || games.length === 0) {
+global.i18n = new I18n({
+    locales: ['en', 'fr'],
+    directory: __dirname + '../../../locales',
+});
+global.i18n.setLocale('en');
+
+
+
+
+/**
+ * Craft a message with the free games of the day
+ * @param {[Game]} games 
+ * @param {GuildBasedChannel} channel 
+ * @returns {Promise<EmbedBuilder>}
+ */
+async function craftEpicGamesMessage(games, channel) {
+
+    let guild = new Guild();
+    if (!await guild.init(channel.guildId)) {
         return null;
     }
     let txt = '';
+    if (guild.language != 'en' && guild.language != 'fr') {
+        guild.language = 'en';
+    }
+    global.i18n.setLocale(guild.language);
     for (let i = 0; i < games.length; i++) {
         let link = '';
         if (games[i].getNamespace() == '') {
@@ -38,7 +60,7 @@ async function craftEpicGamesMessage() {
         } else {
             link = games[i].getPurchaseLink();
         }
-        txt += games[i].getLabel() + `: [${global.i18n.__("GET_HERE")}](" + ${link} + ")` + (i < games.length - 1 ? '\n' : '');
+        txt += games[i].getLabel() + `: [${global.i18n.__("GET_HERE")}](${link})` + (i < games.length - 1 ? '\n' : '');
     }
     let title = games.length === 1 ? global.i18n.__("FREE_GAME_TITLE") : global.i18n.__("FREE_GAMES_TITLE");
     let embed = new EmbedBuilder();
@@ -55,41 +77,35 @@ async function craftEpicGamesMessage() {
     return embed;
 }
 
-/**
- * Send a message to every servers that added this bot
- * @param {Discord.Client} client 
- * @param {EmbedBuilder} embed 
- * @returns 
- */
-async function sendFreeGameMessage(client, embed) {
-    let channels = await DiscordUtils.getTextChannels(client);
-
-    if (!Array.isArray(channels)) {
-        return;
-    }
-    channels.forEach(async element => {
-        await element.send({
-            embeds: [embed]
-        });
-    });
-    Utils.log("Message sent.");
-}
-
-global.i18n = new I18n({
-    locales: ['en', 'fr'],
-    directory: __dirname + '../../../locales',
-});
-global.i18n.setLocale('en');
-
 client.login(Constants.DISCORD_TOKEN);
 
 client.once('ready', async () => {
-    Utils.log("Connected to the Discord bot !")
-    let embed = await craftEpicGamesMessage();
-    if (embed) {
-        await sendFreeGameMessage(client, embed);
+    Utils.log("Connected to the Discord bot !");
+    let games = await epic.getFreeGames();
+    if (!games || !Array.isArray(games) || games.length === 0) {
+        Utils.log("No games found.");
+        process.exit();
+    }
+
+    let textChannels = [];
+    if (process.env.NODE_ENV === 'production') {
+        textChannels = await DiscordUtils.getTextChannels(client);
+    } else if (process.env.NODE_ENV === 'development') {
+        textChannels = await DiscordUtils.getDevTextChannels(client);
     } else {
-        Utils.log("No message to send.");
+        Utils.log("Invalid NODE_ENV value.");
+        process.exit();
+    }
+    for (let i = 0; i < textChannels.length; i++) {
+        let embed = await craftEpicGamesMessage(games, textChannels[i]);
+        if (!embed) {
+            Utils.log(`Failed to craft message for guild ${textChannels[i].guildId}`);
+            continue;
+        }
+        await textChannels[i].send({
+            embeds: [embed]
+        })
+        Utils.log(`Message sent to guild ${textChannels[i].guildId}`);
     }
     Utils.log("Done.");
     await Utils.sleep(3000);
