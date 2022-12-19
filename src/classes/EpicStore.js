@@ -7,6 +7,45 @@ const Utils = require('../functions/utils');
 class EpicStore {
     constructor() {}
 
+
+    /**
+     * Get the confirmed id and namespace of a game from the Epic Games API
+     * @param {JSON} game_promo_raw 
+     * @returns {Promise<{id: string, namespace: string}>
+     */
+    findGameIdFromAPI(game_promo_raw) {
+
+        return new Promise(async (resolve, reject) => {
+           
+            await axios.get(Constants.EPIC_ENDPOINT_API + game_promo_raw.productSlug).then((response) => {
+                let game_data_raw = response.data;
+
+                if (!game_data_raw.pages || game_data_raw.pages.length == 0) {
+                    Utils.log(`Cannot find the game ${game_promo_raw.productSlug} in the Epic Games API. (No pages)`);
+                    resolve({
+                        id: game_promo_raw.id,
+                        namespace: game_promo_raw.namespace
+                    });
+                }
+                let pages = game_data_raw.pages;
+                for (let i = 0; i < pages.length; i++) {
+                    if (pages[i]._title !== "home" || pages[i].offer == null || pages[i].offer.id == null || pages[i].offer.namespace == null) {
+                        continue;
+                    }
+                    resolve({
+                        id: pages[i].offer.id,
+                        namespace: pages[i].offer.namespace
+                    });
+                    return;
+                }
+                Utils.log(`Cannot find the game ${game_promo_raw.productSlug} in the Epic Games API. (No offer for the home page)`);
+            }).catch((error) => {
+                Utils.log(`Cannot find the game ${game_promo_raw.productSlug} in the Epic Games API. (Error)`);
+            });
+            resolve({id: game_promo_raw.id, namespace: game_promo_raw.namespace});
+        });
+    }
+
     /**
      * Get all the currently free games from Epic Game and returns an array of it.
      * @returns {Promise<Game[]>}
@@ -40,11 +79,13 @@ class EpicStore {
                     continue;
                 }
 
+                let IdNamespace = await this.findGameIdFromAPI(games_raw[i]);
+
                 let current = new Game(
                     games_raw[i].title, 
                     Constants.LAUNCHER.EPIC, 
-                    games_raw[i].id, 
-                    games_raw[i].namespace,
+                    IdNamespace.id, 
+                    IdNamespace.namespace,
                     this.getFreeGameUrl(games_raw[i]),
                     this.getFreeGameOgPrice(games_raw[i]),
                     start,

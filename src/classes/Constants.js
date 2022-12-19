@@ -6,6 +6,7 @@ module.exports = Object.freeze({
     INVITE_LINK: process.env.DISCORD_BOT_INVITE_LINK ? process.env.DISCORD_BOT_INVITE_LINK : null,
     FEEDBACK_EMAIL: process.env.FEEDBACK_EMAIL ? process.env.FEEDBACK_EMAIL : null,
     FEEDBACK_EMAIL_PASSWORD: process.env.FEEDBACK_EMAIL_PASSWORD ? process.env.FEEDBACK_EMAIL_PASSWORD : null,
+    EPIC_ENDPOINT_API: "https://store-content-ipv4.ak.epicgames.com/api/en-US/content/products/",
     EPIC_PURCHASE_1: "https://store.epicgames.com/purchase?highlightColor=000000&offers=1-",
     EPIC_PURCHASE_2: "&orderId&purchaseToken#/purchase/payment-methods",
     EPIC_FREE_ENDPOINT: 'https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions',
