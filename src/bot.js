@@ -39,6 +39,9 @@ const cmd_language = require('./commands/language');
 const cmd_invite = require('./commands/invite');
 const cmd_feedback = require('./commands/feedback');
 
+const cmd_slash_ping = require('./command_slash/ping');
+
+
 global.db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -210,14 +213,8 @@ client.login(Constants.DISCORD_TOKEN);
 
 const slashCommands = [
     new SlashCommandBuilder()
-    .setName('channel')
-    .setDescription('Change the channel where the bot will send the messages')
-    .addChannelOption(option => 
-        option
-        .setName('channel')
-        .setDescription('The channel where the bot will send the messages')
-        .setRequired(true)
-    ),
+    .setName('ping')
+    .setDescription('Ping the bot')
 ];
 
 
@@ -225,9 +222,8 @@ client.on('interactionCreate', async (interaction) => {
     if (!interaction.isCommand()) return;
 
     const { commandName } = interaction;
-    if (commandName === 'channel') {
-        
-        await cmd_channel(client, interaction);
+    if (commandName === 'ping') {
+        await cmd_slash_ping(interaction);
     }
 });
 
