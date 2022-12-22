@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, ChannelType, Partials } = require('discord.js');
+const { Client, GatewayIntentBits, ChannelType, Partials, SlashCommandBuilder } = require('discord.js');
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds,
@@ -207,6 +207,33 @@ global.i18n.setLocale('fr');
 
 client.login(Constants.DISCORD_TOKEN);
 
+
+const slashCommands = [
+    new SlashCommandBuilder()
+    .setName('channel')
+    .setDescription('Change the channel where the bot will send the messages')
+    .addChannelOption(option => 
+        option
+        .setName('channel')
+        .setDescription('The channel where the bot will send the messages')
+        .setRequired(true)
+    ),
+];
+
+
+client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isCommand()) return;
+
+    const { commandName } = interaction;
+    if (commandName === 'channel') {
+        await cmd_channel(interaction);
+    }
+});
+
+
 client.on('ready', async () => {
+    for (let i = 0; i < slashCommands.length; i++) {
+        await client.application.commands.create(slashCommands[i]);
+    }
     Utils.log("Discord bot ready !");
 });
