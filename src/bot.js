@@ -226,14 +226,17 @@ client.on('interactionCreate', async (interaction) => {
 
     const { commandName } = interaction;
     if (commandName === 'channel') {
-        await cmd_channel(interaction);
+        
+        await cmd_channel(client, interaction);
     }
 });
 
 
 client.on('ready', async () => {
     for (let i = 0; i < slashCommands.length; i++) {
-        await client.application.commands.create(slashCommands[i]);
+        client.application.commands.create(slashCommands[i]).then((response) => {
+            console.log("Created slash command " + response.name + " (" + response.id + ")");
+        });
     }
     Utils.log("Discord bot ready !");
 });
