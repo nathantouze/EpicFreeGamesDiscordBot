@@ -13,6 +13,8 @@ const client = new Client({
 });
 const mysql = require('mysql2/promise');
 const { I18n } = require('i18n');
+const nodeMailer = require('nodemailer');
+
 
 const { logCommand, getDMUserFromDB, addDmUserToDB, logError, logCommandDM } = require('./functions/discord_utils');
 
@@ -153,8 +155,33 @@ client.on('guildDelete', async (guild) => {
         await global.db.query('INSERT INTO logs (type, text) VALUES (?, ?);', [Constants.LOG_TYPE.ERROR, "Bot could not delete guild #" + guild.id]);
         return;
     }
-    await thisGuild.delete();
+    try {
+        await thisGuild.delete();
+    } catch (e) {
+        await global.db.query('INSERT INTO logs (type, text) VALUES (?, ?);', [Constants.LOG_TYPE.ERROR, "Bot could not delete guild #" + guild.id]);
+        Utils.log("Error while deleting guild #" + guild.id + " : Maybe this guild was already deleted or a development guild");
+    }
     await global.db.query('INSERT INTO logs (type, text) VALUES (?, ?);', [Constants.LOG_TYPE.GUILD_KICK, "Bot has been kicked from guild #" + guild.id]);
+
+    let transporter = nodeMailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: Constants.FEEDBACK_EMAIL,
+            pass: Constants.FEEDBACK_EMAIL_PASSWORD
+        }
+    });
+    transporter.sendMail({
+        from: "Notification <" + Constants.FEEDBACK_EMAIL + ">",
+        to: Constants.FEEDBACK_EMAIL,
+        subject: "Guild deleted",
+        text: "Deleted guild #" + guild.id + ". Name: " + guild.name + "."
+    }, (error, info) => {
+        if (error) {
+            Utils.log(error);
+        }
+    });
 })
 
 client.on('guildCreate', async (guild) => {
@@ -166,6 +193,26 @@ client.on('guildCreate', async (guild) => {
     let thisGuild = new Guild();
     await thisGuild.create(guild.id, guild.name, default_channel.name, default_channel.id, client.user.id);
     await global.db.query('INSERT INTO logs (type, text) VALUES (?, ?), (?, ?);', [Constants.LOG_TYPE.NEW_GUILD, "Joined guild #" + guild.id, Constants.LOG_TYPE.NEW_TEXT_CHANNEL, "Changed text channel to #" + default_channel.id]);
+
+    let transporter = nodeMailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: Constants.FEEDBACK_EMAIL,
+            pass: Constants.FEEDBACK_EMAIL_PASSWORD
+        }
+    });
+    transporter.sendMail({
+        from: "Notification <" + Constants.FEEDBACK_EMAIL + ">",
+        to: Constants.FEEDBACK_EMAIL,
+        subject: "New guild",
+        text: "Joined guild #" + guild.id + ". Name: " + guild.name + ". Default channel: #" + default_channel.id + "."
+    }, (error, info) => {
+        if (error) {
+            Utils.log(error);
+        }
+    });
 });
 
 
