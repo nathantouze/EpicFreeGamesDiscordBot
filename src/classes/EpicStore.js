@@ -29,7 +29,7 @@ class EpicStore {
                 }
                 let pages = game_data_raw.pages;
                 for (let i = 0; i < pages.length; i++) {
-                    if (pages[i]._title !== "home" || pages[i].offer == null || pages[i].offer.id == null || pages[i].offer.namespace == null) {
+                    if (pages[i]._title.toLowerCase() !== "home" || pages[i].offer == null || pages[i].offer.id == null || pages[i].offer.namespace == null) {
                         continue;
                     }
                     resolve({
