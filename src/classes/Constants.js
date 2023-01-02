@@ -36,31 +36,31 @@ module.exports = Object.freeze({
                 name: "changelog",
                 proto: "!changelog [push|check]",
                 description: `CMD_DM_CHANGELOG_DESC`,
-                inline: true,
+                inline: false,
             },
             {
                 name: "language",
                 proto: "!language en|fr",
                 description: `CMD_DM_LANGUAGE_DESC`,
-                inline: true,
+                inline: false,
             },
             {
                 name: "help",
                 proto: "!help [dm]",
                 description: `CMD_HELP_DESC`,
-                inline: true,
+                inline: false,
             },
             {
                 name: "invite",
                 proto: "!invite",
                 description: `CMD_INVITE_DESC`,
-                inline: true,
+                inline: false,
             },
             {
                 name: "feedback",
                 proto: "!feedback MESSAGE",
                 description: `CMD_FEEDBACK_DESC`,
-                inline: true,
+                inline: false,
             }
         ]
     },
@@ -79,55 +79,55 @@ module.exports = Object.freeze({
                 name: "total",
                 proto: "!total",
                 description: `CMD_TOTAL_DESC`,
-                inline: true,
+                inline: false,
             },
             {
                 name: "now",
                 proto: "!now",
                 description: `CMD_NOW_DESC`,
-                inline: true,
+                inline: false,
             },
             {
                 name: "list",
                 proto: "!list [from] [to]",
                 description: `CMD_LIST_DESC`,
-                inline: true,
+                inline: false,
             },
             {
                 name: "channel",
                 proto: "!channel CHANNEL_ID",
                 description: `CMD_CHANNEL_DESC`,
-                inline: true,
+                inline: false,
             },
             {
                 name: "language",
                 proto: "!language en|fr",
                 description: `CMD_LANGUAGE_DESC`,
-                inline: true
+                inline: false
             },
             {
                 name: "help",
                 proto: "!help [dm]",
                 description: `CMD_HELP_DESC`,
-                inline: true,
+                inline: false,
             },
             {
                 name: "info",
                 proto: "!info GAME_ID",
                 description: `CMD_INFO_DESC`,
-                inline: true,
+                inline: false,
             },
             {
                 name: "invite",
                 proto: "!invite",
                 description: `CMD_INVITE_DESC`,
-                inline: true,
+                inline: false,
             },
             {
                 name: "feedback",
                 proto: "!feedback MESSAGE",
                 description: `CMD_FEEDBACK_DESC`,
-                inline: true,
+                inline: false,
             }
         ]
     },

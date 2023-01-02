@@ -91,7 +91,7 @@ class EpicStore {
                     start,
                     end
                 );
-                if (!current_old_ids.includes(games_raw[i].id)) {
+                if (!current_old_ids.includes(IdNamespace.id)) {
                     Utils.log("New game found");
                     await current.addToDatabase();
                     await current.addToCurrent();
