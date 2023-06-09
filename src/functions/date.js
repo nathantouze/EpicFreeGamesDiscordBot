@@ -47,7 +47,7 @@ function dateToDateTime(date) {
 function slashFormatDate(date) {
 
     let day = date.getUTCDate() < 10 ? "0" + date.getUTCDate() : date.getUTCDate();
-    let month = date.getUTCMonth() < 10 ? "0" + date.getUTCMonth() : date.getUTCMonth();
+    let month = (date.getUTCMonth() + 1) < 10 ? "0" + (date.getUTCMonth() + 1) : (date.getUTCMonth() + 1);
     let year = date.getUTCFullYear();
 
     return day + "/" + month + "/" + year;
