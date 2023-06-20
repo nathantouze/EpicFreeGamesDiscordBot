@@ -1,5 +1,6 @@
 const Utils = require('../functions/utils');
 const Constants = require('./Constants');
+const axios = require('axios').default;
 
 class Game {
     constructor(label, id_launcher, id_item, namespace, link, og_price, date_start, date_end) {
@@ -65,8 +66,14 @@ class Game {
     }
 
     async InitIdFromItem() {
-        const query = 'SELECT id FROM free_games WHERE id_item = ?;';
-        let [rows] = await global.db.query(query, [this.getIdItem()]);
+        const query = `\
+        SELECT \
+            id \
+        FROM \
+            free_games \
+        WHERE \
+            id_item = ${this.getIdItem()};`;
+        let [rows] = await global.db.query(query);
 
         if (rows.length === 0) {
             return;
@@ -75,9 +82,24 @@ class Game {
     }
 
     async initFromId(id) {
-        const query = 'SELECT str_label, id_launcher, int_occurrence, id_item, namespace, str_link, og_price, date_end, date_start, date_creation FROM free_games WHERE id = ?;';
+        const query = `
+        SELECT \
+            str_label, \
+            id_launcher, \
+            int_occurrence, \
+            id_item, \
+            namespace, \
+            str_link, \
+            og_price, \
+            date_end, \
+            date_start, \
+            date_creation \
+        FROM \
+            free_games \
+        WHERE \
+            id = ${global.db.escape(id)};`;
 
-        let [rows] = await global.db.query(query, [id]);
+        let [rows] = await global.db.query(query);
         if (rows.length > 0) {
             this._id = id;
             this._label = rows[0].str_label;
@@ -96,6 +118,83 @@ class Game {
         }
     }
 
+
+    /**
+     * Fetch the thumbnail of the game from the graphQL API
+     * @returns {Promise<string>} The thumbnail URL
+     */
+    async fetchThumbnailFromAPI() {
+        
+        return new Promise(async (resolve, reject) => {
+
+            const dataToSend = {
+                local: "en-US",
+                country: "FR",
+                offerId: String(this._id_item),
+                sandboxId: this._namespace
+            };
+            const extensionToSend = {
+                persistedQuery: {
+                    version: 1,
+                    sha256Hash: "6797fe39bfac0e6ea1c5fce0ecbff58684157595fee77e446b4254ec45ee2dcb" // This hash is the same for all requests.
+                }
+            }
+            if (this._namespace === "") {
+                Utils.log(`Cannot find the thumbnail for the game ${this._id_item} (name: ${this._label}) in the Epic Games API. (namespace is empty)`);
+                resolve(null);
+                return;
+            }
+
+            const url = `${Constants.EPIC_GRAPHQL}?operationName=getCatalogOffer&variables=${JSON.stringify(dataToSend)}&extensions=${JSON.stringify(extensionToSend)}`;
+    
+            axios.get(url, {
+                headers: {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                }
+            }).then((response) => {
+
+
+                const data = response.data?.data?.Catalog?.catalogOffer;
+
+                if (data === undefined) {
+                    Utils.log(`Cannot find the thumbnail for the game ${this._id_item} (namespace: ${this._namespace}) in the Epic Games API. GraphQL response: ${JSON.stringify(response.data)}`);
+                    return;
+                }
+                const keyImages = data.keyImages;
+                if (!Array.isArray(keyImages) || keyImages.length === 0) {
+                    Utils.log(`Cannot find the thumbnail for the game ${this._id_item} (namespace: ${this._namespace}) in the Epic Games API. (keyImages)`);
+                    return;
+                }
+                keyImages.forEach((keyImage) => {
+                    if (keyImage.type === "Thumbnail") {
+                        resolve(keyImage.url);
+                    }
+                });
+                resolve(null);
+            
+            }).catch((err) => {
+                Utils.log(`Cannot find the thumbnail for the game ${this._id_item} (namespace: ${this._namespace}) in the Epic Games API. Error: ${err}`);
+                resolve(null);
+            });
+        });
+
+    }
+
+    /**
+     * 
+     * @param {String} url 
+     */
+    async placeThumbnailToDatabase(url) {
+
+        const query = ` \
+        UPDATE \
+            free_games \
+        SET \
+            str_thumbnail_link = ${global.db.escape(url)} \
+        WHERE \
+            id = ${this._id};`;
+        await global.db.query(query);
+    }
 
     /**
     * Add the object to the database

@@ -15,6 +15,10 @@ function getStoreLabel(id)  {
 }
 
 
+function randomBetween(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 /**
  * Returns true if the passed element is an array with at least one element.
  * @param {any} element 
@@ -46,4 +50,5 @@ module.exports = {
     getStoreLabel,
     isNonEmptyArray,
     sleep,
+    randomBetween
 }

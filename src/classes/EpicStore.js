@@ -95,6 +95,14 @@ class EpicStore {
                     Utils.log("New game found");
                     await current.addToDatabase();
                     await current.addToCurrent();
+                    try {
+                        const url_thumbnail = await current.fetchThumbnailFromAPI();
+                        if (url_thumbnail) {
+                            await current.placeThumbnailToDatabase(url_thumbnail);
+                        }
+                    } catch (error) {
+                        Utils.log(`Cannot fetch the thumbnail of the game ${current.getLabel()}. Error: ${JSON.stringify(error)}`);
+                    }
                     games_current.push(current);
                 } else {
                     Utils.log("Game found but already registered yesterday");

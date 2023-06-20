@@ -9,6 +9,7 @@ module.exports = Object.freeze({
     EPIC_ENDPOINT_API: "https://store-content-ipv4.ak.epicgames.com/api/en-US/content/products/",
     EPIC_PURCHASE_1: "https://store.epicgames.com/purchase?highlightColor=000000&offers=1-",
     EPIC_PURCHASE_2: "&orderId&purchaseToken#/purchase/payment-methods",
+    EPIC_GRAPHQL: "https://store.epicgames.com/graphql",
     EPIC_FREE_ASSETS_ENDPOINT: 'https://www.unrealengine.com/marketplace/api/assets?lang=en-US&start=0&count=20&sortBy=effectiveDate&sortDir=DESC&tag[]=4910',
     EPIC_FREE_ENDPOINT: 'https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions',
     EPIC_PRODUCT_ENDPOINT: 'https://www.epicgames.com/store/fr/product',
