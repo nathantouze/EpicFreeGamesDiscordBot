@@ -72,7 +72,7 @@ class Game {
         FROM \
             free_games \
         WHERE \
-            id_item = ${this.getIdItem()};`;
+            id_item = ${global.db.escape(this.getIdItem())};`;
         let [rows] = await global.db.query(query);
 
         if (rows.length === 0) {
