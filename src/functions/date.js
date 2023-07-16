@@ -6,6 +6,9 @@
  */
 function initDateFromEUString(string) {
 
+    if (string == null) {
+        return null;
+    }
     let av = string.split("/");
 
     if (av.length != 3 || Number(av[0]) == NaN || Number(av[1]) == NaN || Number(av[2]) == NaN) {

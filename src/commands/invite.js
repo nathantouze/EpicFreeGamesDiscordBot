@@ -1,14 +1,14 @@
-const { Message } = require('discord.js');
+const { Interaction } = require('discord.js');
 const Contants = require('../classes/Constants');
 
 /**
  * Displays invite link
- * @param {Message} message
+ * @param {Interaction} interaction
  * @returns
 */
-async function invite(message) {
+async function invite(interaction) {
 
-    await message.reply({content: Contants.INVITE_LINK});
+    await interaction.reply({content: Contants.INVITE_LINK});
 }
 
 module.exports = invite;

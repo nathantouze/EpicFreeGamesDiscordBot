@@ -1,21 +1,16 @@
-const { Message } = require('discord.js');
+const { Interaction, CommandInteractionOptionResolver } = require('discord.js');
 const nodeMailer = require('nodemailer');
 const Constants = require("../classes/Constants");
 
 
 /**
- * 
- * @param {Message} message 
+ * Sends feedback to the bot owner
+ * @param {Interaction} interaction 
+ * @param {CommandInteractionOptionResolver} options
  */
-async function feedback(message) {
+async function feedback(interaction, options) {
 
-    let args = message.content.split(' ');
-    if (args.length < 2) {
-        await message.reply(global.i18n.__("ERROR_FEEDBACK_NO_MSG"));
-        return;
-    }
-
-    let msg = args.slice(1).join(' ');
+    let msg = options.getString("message");
 
     let transporter = nodeMailer.createTransport({
         host: "smtp.gmail.com",
@@ -29,14 +24,21 @@ async function feedback(message) {
     transporter.sendMail({
         from: "Feedback <" + Constants.FEEDBACK_EMAIL + ">",
         to: Constants.FEEDBACK_EMAIL,
-        subject: "Feedback from " + message.author.username + "#" + message.author.discriminator,
+        subject: "Feedback from " + interaction.member.user.username + "#" + interaction.member.user.discriminator,
         text: msg
     }, (err, info) => {
         if (err) {
             console.log(err);
         }
     });
-    await message.reply(global.i18n.__("FEEDBACK_SENT"));
+
+    const local_feedback_sent = {
+        "fr": `Feedback envoyé`,
+        "en-US": `Feedback sent`,
+        default: `Feedback sent`
+    }
+
+    await interaction.reply(local_feedback_sent[interaction.locale] || local_feedback_sent.default);
 }
 
 module.exports = feedback;

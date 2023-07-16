@@ -12,7 +12,7 @@
 	"FREE_GAMES_FROM": " depuis le ",
 	"FREE_GAMES_TO": " jusqu'au ",
 	"ENTER_GAME_ID": "Veuillez entrer l'ID du jeu concerné.",
-	"ERROR_ARG": "L'argument donné n'est pas valide.",
+	"ERROR_ARG": "Un argument donné n'est pas valide.",
 	"ERROR_CHANNEL_TYPE": "Le channel donné n'est pas un channel textuel.",
 	"ERROR_ID_404": "L'ID donné n'existe pas.",
 	"OG_PRICE": "Prix d'origine",
@@ -28,8 +28,8 @@
 	"ONLY_ADMIN": "Seul un administrateur peut utiliser cette commande.",
 	"ENTER_CHANNEL_ID": "Veuillez entrer l'ID du channel concerné.",
 	"ERROR_FEEDBACK_NO_MSG": "Veulliez écrire un message.",
-    "FEEDBACK_SENT": "Feedback envoyé.",
-    "NEW_CHANNEL": "Le channel d'info des jeux gratuits est maintenant ",
+	"FEEDBACK_SENT": "Feedback envoyé.",
+	"NEW_CHANNEL": "Le channel d'info des jeux gratuits est maintenant ",
 	"NEW_UPDATE": "Nouvelle mise à jour",
 	"CMD_TOTAL_DESC": "Affiche la somme totale (€) des jeux Epic Games donnés.",
 	"CMD_NOW_DESC": "Affiche le(s) jeu(x) gratuit(s) actuel(s).",
@@ -41,5 +41,6 @@
 	"CMD_INVITE_DESC": "Affiche le lien d'invitation du bot.",
 	"CMD_FEEDBACK_DESC": "Envoie un message de feedback au développeur.",
 	"CMD_DM_CHANGELOG_DESC": "Gère les dernières modifications apportées au bot. \"check\" pour vérifier le message de changelog, \"push\" pour l'envoyez sur tous les channels de notification. (Owner)",
-    "CMD_DM_LANGUAGE_DESC": "Change la langue du bot (messages privés uniquement)."
+	"CMD_DM_LANGUAGE_DESC": "Change la langue du bot (messages privés uniquement).",
+	"UNKNOWN_ERROR": "Une erreur inconnue est survenue."
 }

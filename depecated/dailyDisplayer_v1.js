@@ -5,10 +5,10 @@ const client = new Client({
     ] 
 });
 const mysql = require('mysql2/promise');
-const Utils = require('../functions/utils');
-const DiscordUtils = require('../functions/discord_utils');
-const Constants = require('../classes/Constants');
-const EpicStore = require('../classes/EpicStore');
+const Utils = require('../src/functions/utils');
+const DiscordUtils = require('../src/functions/discord_utils');
+const Constants = require('../src/classes/Constants');
+const EpicStore = require('../src/classes/EpicStore');
 const { I18n } = require('i18n');
 
 

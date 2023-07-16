@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, ChannelType, Partials, SlashCommandBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, ChannelType, Partials, REST, Routes } = require('discord.js');
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds,
@@ -12,36 +12,29 @@ const client = new Client({
     ],
 });
 const mysql = require('mysql2/promise');
-const { I18n } = require('i18n');
 const nodeMailer = require('nodemailer');
 
 
-const { logCommand, getDMUserFromDB, addDmUserToDB, logError, logCommandDM } = require('./functions/discord_utils');
+const { logCommand, buildSlashCommand } = require('./functions/discord_utils');
 
-const { isCommand, isCommandDM } = require('./functions/commands');
 const Utils = require('./functions/utils');
 const Constants = require('./classes/Constants');
 
-
-
 const Guild = require('./classes/Guild');
-const User = require('./classes/User');
 
 // Load commands
-const cmd_dm_changelog = require('./command_dm/changelog');
-const cmd_dm_language = require('./command_dm/language');
+const cmd_dm_changelog = require('./commands/changelog');
 
 const cmd_channel = require('./commands/channel');
 const cmd_total = require('./commands/total');
 const cmd_now = require('./commands/now');
 const cmd_list = require('./commands/list');
-const cmd_help = require('./commands/help');
 const cmd_info = require('./commands/info');
 const cmd_language = require('./commands/language');
 const cmd_invite = require('./commands/invite');
 const cmd_feedback = require('./commands/feedback');
 
-const cmd_slash_ping = require('./command_slash/ping');
+const cmd_slash_ping = require('./commands/ping');
 
 
 global.db = mysql.createPool({
@@ -54,98 +47,6 @@ global.db = mysql.createPool({
 }).on('connection', () => {
     Utils.log("Connected to the database !")
 });
-
-
-/**
- * Handle every possible DM commands
- * @param {Message} message 
- * @returns 
- */
-async function handleDMCommands(message) {
-    let user = new User();
-    if (!await user.init(message.author.id)) {
-        await user.create(message.author.id, message.author.username + "#" + message.author.discriminator, 'en');
-    }
-
-    global.i18n.setLocale(user.language);
-    switch (isCommandDM(message.content)) {
-        case Constants.COMMAND_DM_ID.CHANGELOG: {
-            await cmd_dm_changelog(client, message);
-            break;
-        }
-        case Constants.COMMAND_DM_ID.LANGUAGE: {
-            await cmd_dm_language(message, user.toJSON().id_user);
-            break;
-        }
-        case Constants.COMMAND_DM_ID.HELP: {
-            await cmd_help(message);
-            break;
-        }
-        case Constants.COMMAND_DM_ID.INVITE: {
-            await cmd_invite(message);
-            break;
-        }
-        case Constants.COMMAND_DM_ID.FEEDBACK: {
-            await cmd_feedback(message);
-            break;
-        }
-        default: {
-            break;
-        }
-    }
-    return;
-}
-
-
-async function handleGuildCommands(message) {
-    let [rows] = await global.db.query('SELECT language FROM bot_guilds WHERE id_guild = ?;', [message.guild.id]);
-    if (rows.length > 0) {
-        global.i18n.setLocale(rows[0].language);
-    } else {
-        global.i18n.setLocale('en');
-    }
-    switch (isCommand(message.content)) {
-        case Constants.COMMAND_ID.CHANNEL: {
-            await cmd_channel(client, message);
-            break;
-        }
-        case Constants.COMMAND_ID.TOTAL: {
-            await cmd_total(message);
-            break;
-        }
-        case Constants.COMMAND_ID.NOW: {
-            await cmd_now(message);
-            break;
-        }
-        case Constants.COMMAND_ID.LIST: {
-            await cmd_list(message);
-            break;
-        }
-        case Constants.COMMAND_ID.HELP: {
-            await cmd_help(message);
-            break;
-        }
-        case Constants.COMMAND_ID.INFO: {
-            await cmd_info(message);
-            break;
-        }
-        case Constants.COMMAND_ID.LANGUAGE: {
-            await cmd_language(message);
-            break;
-        }
-        case Constants.COMMAND_ID.INVITE: {
-            await cmd_invite(message);
-            break;
-        }
-        case Constants.COMMAND_ID.FEEDBACK: {
-            await cmd_feedback(message);
-            break;
-        }
-        default: {
-            break;
-        }
-    }
-}
 
 
 client.on('guildDelete', async (guild) => {
@@ -215,70 +116,74 @@ client.on('guildCreate', async (guild) => {
     });
 });
 
-
-client.on('messageCreate', async (message) => {
-
-    // Ignore bot messages
-    if (message.author.bot) {
-        return;
-    }
-
-    // Private message handling
-    if (message.channel.type === ChannelType.DM) {
-        try {
-            await logCommandDM(message.content, message.author.username + "#" + message.author.discriminator);
-            await handleDMCommands(message);
-        } catch (e) {
-            Utils.log(e);
-            await logError(`Error while handling DM command ${global.db.escape(message.content)} from ${global.db.escape(message.author.username + "#" + message.author.discriminator)}`);
-        }
-        return;
-    }
-
-    // Guild message handling
-    if (isCommand(message.content)) {
-        try {
-            await logCommand(message);
-            await handleGuildCommands(message);
-        } catch (e) {
-            Utils.log(e);
-            await logError(`Error while handling command ${global.db.escape(message.content)} from ${global.db.escape(message.author.username + "#" + message.author.discriminator)} in guild ${global.db.escape(message.guild.name)}`);
-        }
-        return;
-    }
-    
-});
-
-global.i18n = new I18n({
-    locales: ['en', 'fr'],
-    directory: __dirname + '/../locales',
-});
-global.i18n.setLocale('fr');
-
 client.login(Constants.DISCORD_TOKEN);
-
-
-const slashCommands = [
-    new SlashCommandBuilder()
-    .setName('ping')
-    .setDescription('Ping the bot')
-];
-
 
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isCommand()) return;
 
-    const { commandName } = interaction;
-    if (commandName === 'ping') {
-        await cmd_slash_ping(interaction);
+    const { commandName, options } = interaction;
+
+    switch (commandName) {
+        case 'ping': {
+            await cmd_slash_ping(interaction);
+            break;
+        }
+        case 'list': {
+            await cmd_list(interaction, options);
+            break;
+        }
+        case 'now': {
+            await cmd_now(interaction, options);
+            break;
+        }
+        case 'total': {
+            await cmd_total(interaction, options);
+            break;
+        }
+        case 'info': {
+            await cmd_info(interaction, options);
+            break;
+        }
+        case 'language': {
+            await cmd_language(interaction, options);
+            break;
+        }
+        case 'invite': {
+            await cmd_invite(interaction);
+            break;
+        }
+        case 'feedback': {
+            await cmd_feedback(interaction, options);
+            break;
+        }
+        case 'channel': {
+            await cmd_channel(client, interaction, options);
+            break;
+        }
+        case 'changelog': {
+            await cmd_dm_changelog(client, interaction, options);
+            break;
+        }
+        default: {
+            return;
+        }
     }
+    await logCommand(interaction)
+
 });
 
-
 client.on('ready', async () => {
-    for (let i = 0; i < slashCommands.length; i++) {
-        client.application.commands.create(slashCommands[i]).then((response) => {
-            console.log("Created slash command " + response.name + " (" + response.id + ")");
+
+
+
+    const commands = Constants.SLASH_COMMANDS;
+
+    for (let i = 0; i < commands.length; i++) {
+
+        const commandBuilder = buildSlashCommand(commands[i]);
+
+        client.application.commands.create(commandBuilder).then((response) => {
+            console.log("Created slash command /" + response.name + " (" + response.id + ")");
         });
     }
     Utils.log("Discord bot ready !");

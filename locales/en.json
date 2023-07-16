@@ -12,7 +12,7 @@
     "FREE_GAMES_FROM": " since ",
     "FREE_GAMES_TO": " until ",
     "ENTER_GAME_ID": "Please enter the ID of the game",
-    "ERROR_ARG": "The argument is not valid.",
+    "ERROR_ARG": "An argument is not valid.",
     "ERROR_CHANNEL_TYPE": "The given channel is not a text channel.",
     "ERROR_ID_404": "The ID is not valid.",
     "OG_PRICE": "Original price",
@@ -41,5 +41,6 @@
     "CMD_INVITE_DESC": "Displays the bot's invite link.",
     "CMD_FEEDBACK_DESC": "Send a feedback to the bot's owner.",
     "CMD_DM_CHANGELOG_DESC": "Manage last modifications made for the bot. \"check\" is used to check the notification message, \"push\" is used to send the notification to every guilds (servers). (Owner)",
-    "CMD_DM_LANGUAGE_DESC": "Change bot language (DM only)."
+    "CMD_DM_LANGUAGE_DESC": "Change bot language (DM only).",
+    "UNKNOWN_ERROR": "An unknown error has occured."
 }

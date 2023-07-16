@@ -1,4 +1,4 @@
-const { Guild, GuildBasedChannel, Message } = require('discord.js');
+const { Guild, GuildBasedChannel, Interaction, Message, SlashCommandBuilder } = require('discord.js');
 const Constants = require('../classes/Constants');
 
 
@@ -133,6 +133,7 @@ async function getTextChannels(client) {
     return channels;
 }
 
+
 /**
  * Register the command in the database as DM
  * @param {String} messageContent
@@ -145,10 +146,15 @@ async function logCommandDM(messageContent, username) {
 
 /**
  * Register the command in the database
- * @param {Message} message 
+ * @param {Interaction} interaction 
  */
-async function logCommand(message) {
-    await global.db.query(`INSERT INTO logs (type, text) VALUES (?, ?);`, [Constants.LOG_TYPE.COMMAND, `${message.author.username} sent "${message.content}" in guild #${message.guildId} and channel #${message.channelId}`]);
+async function logCommand(interaction) {
+
+    const messageContent = '/' + interaction.commandName + ' ' + interaction.options.data.map(option => {
+        return option.name + '=' + option.value;
+    }).join(' ');
+
+    await global.db.query(`INSERT INTO logs (type, text) VALUES (?, ?);`, [Constants.LOG_TYPE.COMMAND, `${interaction.member.user.username} sent "${messageContent}" in guild #${interaction.guildId} and channel #${interaction.channelId}`]);
 }
 
 /**
@@ -157,6 +163,124 @@ async function logCommand(message) {
  */
 async function logError(txt) {
     await global.db.query("INSERT INTO logs (type, text) VALUES (?, ?);", [Constants.LOG_TYPE.ERROR, txt]);
+}
+
+
+/**
+ * 
+ * @param {{
+ *    name: string,
+ *    description: [
+ *        {
+ *            language: string,
+ *            text: string
+ *        }
+ *    ],
+ *    options: [{
+*         type: string,
+*         name: string,
+ *        description: [   
+ *            {
+ *                language: string,  
+ *                text: string    
+ *            }
+ *        ],
+ *        choices: [{
+ *            name: string,
+ *            value: string
+ *        }], 
+ *        required: boolean
+ *    }],
+ *    dm: boolean,
+ * }} cmd 
+ * @returns 
+ */
+function buildSlashCommand(cmd) {
+
+    var cmd_descs = cmd.description.reduce((acc, desc) => {
+        acc[desc.language] = desc.text;
+        return acc;
+    }, {});
+
+    var command_builder = new SlashCommandBuilder()
+    .setName(cmd.name)
+    .setDescription(cmd_descs["en-US"])
+    .setDescriptionLocalizations(cmd_descs)
+    .setDMPermission(cmd.dm)
+
+    for (let i = 0; i < cmd.options.length; i++) {
+        const desc = cmd.options[i].description.reduce((acc, desc) => {
+            acc[desc.language] = desc.text;
+            return acc;
+        }, {});
+        switch (cmd.options[i].type) {
+            case 'boolean':
+                command_builder.addBooleanOption(
+                    option => {
+                        option
+                        .setName(cmd.options[i].name)
+                        .setDescription(desc['en-US'])
+                        .setDescriptionLocalizations(desc)
+                        .setRequired(cmd.options[i].required)
+                        return option;
+                    }
+                )
+                break;
+            case 'string':
+                command_builder.addStringOption(
+                    option => {
+                        option
+                        .setName(cmd.options[i].name)
+                        .setDescription(desc['en-US'])
+                        .setDescriptionLocalizations(desc)
+                        .setRequired(cmd.options[i].required)
+                        //.setChoices(cmd.options[i].choices)
+                        return option;
+                    }
+                )
+                break;
+            case 'number':
+                command_builder.addIntegerOption(
+                    option => {
+                        option
+                        .setName(cmd.options[i].name)
+                        .setDescription(desc['en-US'])
+                        .setDescriptionLocalizations(desc)
+                        .setRequired(cmd.options[i].required)
+                        return option;
+                    }
+                )
+                break;
+            case 'file':
+                command_builder.addAttachmentOption(
+                    option => {
+                        option
+                        .setName(cmd.options[i].name)
+                        .setDescription(desc['en-US'])
+                        .setDescriptionLocalizations(desc)
+                        .setRequired(cmd.options[i].required)
+                        return option;
+                    }
+                )
+                break;
+            case 'channel': {
+                command_builder.addChannelOption(
+                    option => {
+                        option
+                        .setName(cmd.options[i].name)
+                        .setDescription(desc['en-US'])
+                        .setDescriptionLocalizations(desc)
+                        .setRequired(cmd.options[i].required)
+                        return option;
+                    }
+                )
+                break;
+            }
+            default:
+                break;
+        }
+    }
+    return command_builder;
 }
 
 module.exports = {
@@ -168,5 +292,6 @@ module.exports = {
     logCommandDM,
     logError,
     getDMUserFromDB,
-    addDmUserToDB
+    addDmUserToDB,
+    buildSlashCommand
 }

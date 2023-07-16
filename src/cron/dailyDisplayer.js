@@ -60,7 +60,7 @@ async function craftEpicGamesMessage(games, channel) {
         } else {
             link = games[i].getPurchaseLink();
         }
-        txt += games[i].getLabel() + `: [${global.i18n.__("GET_HERE")}](${link})` + (i < games.length - 1 ? '\n' : '');
+        txt += games[i].getLabel() + ` (#${games[i].getId()}): [${global.i18n.__("GET_HERE")}](${link})` + (i < games.length - 1 ? '\n' : '');
     }
     let title = games.length === 1 ? global.i18n.__("FREE_GAME_TITLE") : global.i18n.__("FREE_GAMES_TITLE");
     let embed = new EmbedBuilder();

@@ -31,6 +31,311 @@ module.exports = Object.freeze({
         OTHER: 'other',
     },
 
+    SLASH_COMMANDS: [
+        {
+            name: "ping",
+            description: [
+                {
+                    language: 'en-US',
+                    text: "Ping the bot."
+                },
+                {
+                    language: 'fr',
+                    text: "Ping le bot."
+                }
+            ],
+            options: [],
+            dm: true,
+        },
+        {
+            name: "total",
+            description: [
+                {
+                    language: 'en-US',
+                    text: "Display the total amount (€) of the given games.",
+                },
+                {
+                    language: 'fr',
+                    text: "Affiche le montant total (€) des jeux donnés.",
+                }
+            ],
+            options: [],
+            dm: false,
+        },
+        {
+            name: "now",
+            description: [
+                {
+                    language: 'en-US',
+                    text: "Displays the current free game(s).",
+                },
+                {
+                    language: 'fr',
+                    text: 'Affiche le ou les jeux gratuits actuels.',
+                }
+            ],
+            options: [],
+            dm: false,
+        },
+        {
+            name: "list",
+            description: [
+                {
+                    language: 'en-US',
+                    text: "List given games on a specified period. `from` and `to` are dates using the format dd/mm/yyyy.",
+                },
+                {
+                    language: 'fr',
+                    text: "Liste les jeux donnés sur un temps donné. `from` et `to` sont des dates sous la forme jj/mm/aaaa.",
+                }
+            ],
+            options: [
+                {
+                    type: 'string',
+                    name: "from",
+                    description: [
+                        {
+                            language: 'en-US',
+                            text: "Start date of the period."
+                        },
+                        {
+                            language: 'fr',
+                            text: "Date de début de la période."
+                        }
+                    ],
+                    choices: [],
+                    required: false,
+                },
+                {
+                    type: 'string',
+                    name: "to",
+                    description: [
+                        {
+                            language: 'en-US',
+                            text: "End date of the period."
+                        },
+                        {
+                            language: 'fr',
+                            text: "Date de fin de la période."
+                        }
+                    ],
+                    choices: [],
+                    required: false,
+                }
+            ],
+            dm: true,
+        },
+        {
+            name: "info",
+            description: [
+                {
+                    language: 'en-US',
+                    text: "Display the information of a given game.",
+                },
+                {
+                    language: 'fr',
+                    text: "Affiche les informations d'un jeu donné.",
+                }
+            ],
+            options: [
+                {
+                    type: 'number',
+                    name: "id",
+                    description: [
+                        {
+                            language: 'en-US',
+                            text: "ID of the game."
+                        },
+                        {
+                            language: 'fr',
+                            text: "ID du jeu."
+                        }
+                    ],
+                    choices: [],
+                    required: true,
+                }
+            ],
+            dm: true,
+        },
+        {
+            name: "channel",
+            description: [
+                {
+                    language: 'en-US',
+                    text: "Set the channel where the bot will post the free games.",
+                },
+                {
+                    language: 'fr',
+                    text: "Définit le salon où le bot postera les jeux gratuits.",
+                }
+            ],
+            options: [
+                {
+                    type: 'channel',
+                    name: "channel",
+                    description: [
+                        {
+                            language: 'en-US',
+                            text: "ID of the channel."
+                        },
+                        {
+                            language: 'fr',
+                            text: "ID du salon."
+                        }
+                    ],
+                    choices: [],
+                    required: true,
+                }
+            ],
+            dm: false,
+        },
+        {
+            name: "language",
+            description: [
+                {
+                    language: 'en-US',
+                    text: "Set the language of the new game notification.",
+                },
+                {
+                    language: 'fr',
+                    text: "Définit la langue des notifications des nouveaux jeux.",
+                }
+            ],
+            options: [
+                {
+                    type: 'string',
+                    name: "language",
+                    description: [
+                        {
+                            language: 'en-US',
+                            text: "Language of the bot (\"fr\" or \"en\")."
+                        },
+                        {
+                            language: 'fr',
+                            text: "Langue du bot (\"fr\" ou \"en\")."
+                        }
+                    ],
+                    choices: [
+                        {
+                            name: "English",
+                            value: "en",
+                        },
+                        {
+                            name: "Français",
+                            value: "fr",
+                        }
+                    ],
+                    required: true,
+                }
+            ],
+            dm: true
+        },
+        {
+            name: "invite",
+            description: [
+                {
+                    language: 'en-US',
+                    text: "Display the link to invite the bot.",
+                },
+                {
+                    language: 'fr',
+                    text: "Affiche le lien pour inviter le bot.",
+                }
+            ],
+            options: [],
+            dm: true,
+        },
+        {
+            name: "feedback",
+            description: [
+                {
+                    language: 'en-US',
+                    text: "Send a feedback to the bot's owner.",
+                },
+                {
+                    language: 'fr',
+                    text: "Envoie un retour au propriétaire du bot.",
+                }
+            ],
+            options: [
+                {
+                    type: 'string',
+                    name: "message",
+                    description: [
+                        {
+                            language: 'en-US',
+                            text: "Message to send."
+                        },
+                        {
+                            language: 'fr',
+                            text: "Message à envoyer."
+                        }
+                    ],
+                    choices: [],
+                    required: true,
+                }
+            ],
+            dm: true,
+        },
+        {
+            name: "changelog",
+            description: [
+                {
+                    language: 'en-US',
+                    text: "Manage update notifications (Owner)",
+                },
+                {
+                    language: 'fr',
+                    text: "Gère les notifications de mise à jours (Propriétaire)",
+                }
+            ],
+            options: [
+                {
+                    type: 'string',
+                    name: "action",
+                    description: [
+                        {
+                            language: 'en-US',
+                            text: "Action to do."
+                        },
+                        {
+                            language: 'fr',
+                            text: "Action à effectuer."
+                        }
+                    ],
+                    choices: [
+                        {
+                            name: "check",
+                            value: "check",
+                        },
+                        {
+                            name: "push",
+                            value: "push",
+                        }
+                    ],
+                    required: false,
+                },
+                {
+                    type: 'file',
+                    name: "file",
+                    description: [
+                        {
+                            language: 'en-US',
+                            text: "JSON file to send."
+                        },
+                        {
+                            language: 'fr',
+                            text: "Fichier JSON à envoyer."
+                        }
+                    ],
+                    choices: [],
+                    required: false,
+                }
+            ],
+            dm: true,
+        },
+    ],
+
     COMMAND_DM: {
         prefix: "!",
         cmd: [
