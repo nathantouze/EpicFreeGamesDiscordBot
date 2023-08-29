@@ -64,6 +64,7 @@ async function changelog(client, interaction, options) {
                 embeds: [embed]
             });
         });
+        await interaction.reply("Changelog sent to all channels");
     } else if (action === "check") {
         let lastContent = getLastContent();
 
