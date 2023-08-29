@@ -154,7 +154,14 @@ async function logCommand(interaction) {
         return option.name + '=' + option.value;
     }).join(' ');
 
-    await global.db.query(`INSERT INTO logs (type, text) VALUES (?, ?);`, [Constants.LOG_TYPE.COMMAND, `${interaction.member.user.username} sent "${messageContent}" in guild #${interaction.guildId} and channel #${interaction.channelId}`]);
+    let username = '';
+    try {
+        username = interaction.member.user.username;
+    } catch (e) {
+        username = 'unknwown (owner ?)';
+    }
+
+    await global.db.query(`INSERT INTO logs (type, text) VALUES (?, ?);`, [Constants.LOG_TYPE.COMMAND, `${username} sent "${messageContent}" in guild #${interaction.guildId} and channel #${interaction.channelId}`]);
 }
 
 /**
