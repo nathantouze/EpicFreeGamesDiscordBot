@@ -6,6 +6,10 @@ module.exports = Object.freeze({
     INVITE_LINK: process.env.DISCORD_BOT_INVITE_LINK ? process.env.DISCORD_BOT_INVITE_LINK : null,
     FEEDBACK_EMAIL: process.env.FEEDBACK_EMAIL ? process.env.FEEDBACK_EMAIL : null,
     FEEDBACK_EMAIL_PASSWORD: process.env.FEEDBACK_EMAIL_PASSWORD ? process.env.FEEDBACK_EMAIL_PASSWORD : null,
+
+
+    USER_AGENT: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0",
+
     EPIC_ENDPOINT_API: "https://store-content-ipv4.ak.epicgames.com/api/en-US/content/products/",
     EPIC_PURCHASE_1: "https://store.epicgames.com/purchase?highlightColor=000000&offers=1-",
     EPIC_PURCHASE_2: "&orderId&purchaseToken#/purchase/payment-methods",
@@ -13,13 +17,22 @@ module.exports = Object.freeze({
     EPIC_FREE_ASSETS_ENDPOINT: 'https://www.unrealengine.com/marketplace/api/assets?lang=en-US&start=0&count=20&sortBy=effectiveDate&sortDir=DESC&tag[]=4910',
     EPIC_FREE_ENDPOINT: 'https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions',
     EPIC_PRODUCT_ENDPOINT: 'https://www.epicgames.com/store/fr/product',
+
+    GOG_SEARCH_ENDPOINT: "https://embed.gog.com/games/ajax/filtered?mediaType=game&search=",
+    GOG_MAIN_ENDPOINT: 'https://www.gog.com',
+    GOG_API_ENDPOINT: 'https://api.gog.com',
+    GOG_IMAGE_ENDPOINT: "https://images.gog-statics.com",
+    GOG_CLAIM_ENDPOINT: "https://www.gog.com/giveaway/claim",
+
     STEAMDB_FREE_ENDPOINT: 'https://steamdb.info/upcoming/free/',
     STEAM_PRODUCT_PAGE_ENDPOINT: 'https://store.steampowered.com/app',
     STEAM_PRODUCT_INFO_ENDPOINT: 'https://store.steampowered.com/api/appdetails/?appids=',
     LAUNCHER: {
         STEAM: 1,
-        EPIC: 2
+        EPIC: 2,
+        GOG: 3,
     },
+
     LOG_TYPE: {
         ERROR: 'error',
         NEW_GUILD: 'new_guild',

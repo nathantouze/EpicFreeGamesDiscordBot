@@ -10,6 +10,7 @@ function getStoreLabel(id)  {
     switch (id) {
         case Constants.LAUNCHER.EPIC: return "Epic Games";
         case Constants.LAUNCHER.STEAM: return "Steam";
+        case Constants.LAUNCHER.GOG: return "GOG";
         default: return "Unknown";
     }
 }

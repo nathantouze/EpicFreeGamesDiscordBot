@@ -120,10 +120,10 @@ class Game {
 
 
     /**
-     * Fetch the thumbnail of the game from the graphQL API
+     * Fetch the thumbnail of the game from the graphQL Epic Games API
      * @returns {Promise<string>} The thumbnail URL
      */
-    async fetchThumbnailFromAPI() {
+    async fetchThumbnailFromEpicAPI() {
         
         return new Promise(async (resolve, reject) => {
 

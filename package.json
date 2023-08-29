@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node test.js",
     "start": "node src/index.js",
     "rm": "node src/cron/removeLast.js",
     "daily": "node src/cron/dailyDisplayer.js",
@@ -28,6 +28,7 @@
     "dotenv": "^8.2.0",
     "i18n": "^0.15.1",
     "mysql2": "^2.3.0",
+    "node-html-parser": "^6.1.6",
     "nodemailer": "^6.8.0"
   }
 }

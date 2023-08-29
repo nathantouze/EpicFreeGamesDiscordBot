@@ -38,7 +38,7 @@ async function main() {
             Utils.log("Error while initializing the game");
             return;
         }
-        const url = await game.fetchThumbnailFromAPI();
+        const url = await game.fetchThumbnailFromEpicAPI();
         if (url === null) {
             Utils.log("Error while fetching the thumbnail:" + game._id);
         } else {

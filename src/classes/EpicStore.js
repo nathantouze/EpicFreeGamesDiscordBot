@@ -63,7 +63,7 @@ class EpicStore {
         }
 
         let games_current = [];
-        await this.cleanCurretlyFreeGames();
+        await this.cleanCurrentlyFreeGames();
         await axios.get(Constants.EPIC_FREE_ENDPOINT).then((response) => {
             games_raw = response.data.data.Catalog.searchStore.elements;
         });
@@ -92,11 +92,11 @@ class EpicStore {
                     end
                 );
                 if (!current_old_ids.includes(IdNamespace.id)) {
-                    Utils.log("New game found");
+                    Utils.log("New game found on Epic Games: " + current.getLabel());
                     await current.addToDatabase();
                     await current.addToCurrent();
                     try {
-                        const url_thumbnail = await current.fetchThumbnailFromAPI();
+                        const url_thumbnail = await current.fetchThumbnailFromEpicAPI();
                         if (url_thumbnail) {
                             await current.placeThumbnailToDatabase(url_thumbnail);
                         }
@@ -193,9 +193,15 @@ class EpicStore {
     }
 
 
-    async cleanCurretlyFreeGames() {
-        Utils.log("Clearing the games of yesterday from the \"free_games_current\" table");
-        const query = 'DELETE FGC FROM free_games_current FGC INNER JOIN free_games FG ON FGC.id_free_game = FG.id WHERE FG.id_launcher = ' + global.db.escape(Constants.LAUNCHER.EPIC);
+    async cleanCurrentlyFreeGames() {
+        Utils.log("Clearing the games of yesterday from the \"free_games_current\" table (Epic Games)");
+        const query = `
+        DELETE FGC FROM 
+            free_games_current FGC 
+            INNER JOIN free_games FG ON FGC.id_free_game = FG.id 
+        WHERE 
+            FG.id_launcher = ${global.db.escape(Constants.LAUNCHER.EPIC)}`;
+        console.log(query);
         await global.db.query(query);
     }
 }
