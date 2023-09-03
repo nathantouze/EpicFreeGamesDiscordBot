@@ -134,7 +134,7 @@ class GOG {
                 const list_free_games = await Game.listAllCurrentGames(Constants.LAUNCHER.GOG);
                 const list_free_games_ids = [];
                 for (let i = 0; i < list_free_games.length; i++) {
-                    list_free_games_ids.push(list_free_games[i].getIdItem());
+                    list_free_games_ids.push(Number(list_free_games[i].getIdItem()));
                 }
                 await this.cleanCurrentlyFreeGames();
 
