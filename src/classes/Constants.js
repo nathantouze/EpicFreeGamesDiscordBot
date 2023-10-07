@@ -72,7 +72,38 @@ module.exports = Object.freeze({
                     text: "Affiche le montant total (€) des jeux donnés.",
                 }
             ],
-            options: [],
+            options: [
+                {
+                    type: 'boolean',
+                    name: 'epic',
+                    description: [
+                        {
+                            language: 'en-US',
+                            text: "Display the total amount of the Epic Games Store games."
+                        },
+                        {
+                            language: 'fr',
+                            text: "Affiche le montant total des jeux de l'Epic Games Store."
+                        }
+                    ],
+                    required: false,
+                },
+                {
+                    type: 'boolean',
+                    name: 'gog',
+                    description: [
+                        {
+                            language: 'en-US',
+                            text: "Display the total amount of the GOG games."
+                        },
+                        {
+                            language: 'fr',
+                            text: "Affiche le montant total des jeux de GOG."
+                        }
+                    ],
+                    required: false,
+                }
+            ],
             dm: false,
         },
         {
