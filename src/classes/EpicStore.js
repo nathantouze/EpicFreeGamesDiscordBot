@@ -16,8 +16,17 @@ class EpicStore {
     findGameIdFromAPI(game_promo_raw) {
 
         return new Promise(async (resolve, reject) => {
-           
-            await axios.get(Constants.EPIC_ENDPOINT_API + game_promo_raw.productSlug).then((response) => {
+
+            if (game_promo_raw.productSlug == null) {
+                Utils.log(`Cannot find the game ${game_promo_raw.title} in the Epic Games API. (No productSlug)`);
+                resolve({
+                    id: game_promo_raw.id,
+                    namespace: game_promo_raw.namespace
+                });
+                return;
+            }
+
+            axios.get(Constants.EPIC_ENDPOINT_API + game_promo_raw.productSlug).then((response) => {
                 let game_data_raw = response.data;
 
                 if (!game_data_raw.pages || game_data_raw.pages.length == 0) {
@@ -41,8 +50,11 @@ class EpicStore {
                 Utils.log(`Cannot find the game ${game_promo_raw.productSlug} in the Epic Games API. (No offer for the home page)`);
             }).catch((error) => {
                 Utils.log(`Cannot find the game ${game_promo_raw.productSlug} in the Epic Games API. (Error)`);
+                resolve({
+                    id: game_promo_raw.id,
+                    namespace: game_promo_raw.namespace
+                });
             });
-            resolve({id: game_promo_raw.id, namespace: game_promo_raw.namespace});
         });
     }
 
@@ -201,7 +213,6 @@ class EpicStore {
             INNER JOIN free_games FG ON FGC.id_free_game = FG.id 
         WHERE 
             FG.id_launcher = ${global.db.escape(Constants.LAUNCHER.EPIC)}`;
-        console.log(query);
         await global.db.query(query);
     }
 }

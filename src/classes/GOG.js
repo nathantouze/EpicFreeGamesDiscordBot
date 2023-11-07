@@ -46,6 +46,11 @@ class GOG {
     
         const root = parse(html);
         const giveaway = root.querySelector('#giveaway');
+
+        if (!giveaway) {
+            throw new Error('Cannot find the giveaway div in the GOG main page.');
+        }
+
         const fnText = giveaway._rawAttrs.onclick;
         const regex = /(?<vip>window\.gogTools\.sendPromotionClick\(.*'(?<data>.*))',.*{/gs;
         const array = regex.exec(fnText);
@@ -127,7 +132,6 @@ class GOG {
     async getFreePromo() {
         return new Promise(async (resolve, reject) => {
 
-
             try {
 
                 let game_current = [];
@@ -143,6 +147,7 @@ class GOG {
                         'User-Agent': Constants.USER_AGENT
                     }
                 });
+
                 const data = this.extractPromoData(html.data);
                 const [dateStart, dateEnd] = this.parseDates(data.endTime);
 
