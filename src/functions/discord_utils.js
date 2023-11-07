@@ -154,11 +154,11 @@ async function logCommand(interaction) {
         return option.name + '=' + option.value;
     }).join(' ');
 
-    let username = '';
-    try {
-        username = interaction.member.user.username;
-    } catch (e) {
-        username = 'unknwown (owner ?)';
+    let username = "";
+    if (interaction.member && interaction.member.user && interaction.member.user.username) {
+        username = interaction.member.user.username + (interaction.member.user.discriminator ? "#" + interaction.member.user.discriminator : "");
+    } else {
+        username = interaction.user && interaction.user.username ? interaction.user.username : "Unknown";
     }
 
     await global.db.query(`INSERT INTO logs (type, text) VALUES (?, ?);`, [Constants.LOG_TYPE.COMMAND, `${username} sent "${messageContent}" in guild #${interaction.guildId} and channel #${interaction.channelId}`]);

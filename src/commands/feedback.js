@@ -21,10 +21,17 @@ async function feedback(interaction, options) {
             pass: Constants.FEEDBACK_EMAIL_PASSWORD
         }
     });
+    let username = "";
+    if (interaction.member && interaction.member.user && interaction.member.user.username) {
+        username = interaction.member.user.username + (interaction.member.user.discriminator ? "#" + interaction.member.user.discriminator : "");
+    } else {
+        username = interaction.user && interaction.user.username ? interaction.user.username : "Unknown";
+    }
+
     transporter.sendMail({
         from: "Feedback <" + Constants.FEEDBACK_EMAIL + ">",
         to: Constants.FEEDBACK_EMAIL,
-        subject: "Feedback from " + interaction.member.user.username + "#" + interaction.member.user.discriminator,
+        subject: "Feedback from " + username,
         text: msg
     }, (err, info) => {
         if (err) {
