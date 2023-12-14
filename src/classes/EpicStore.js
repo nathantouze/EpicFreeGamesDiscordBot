@@ -80,50 +80,52 @@ class EpicStore {
             games_raw = response.data.data.Catalog.searchStore.elements;
         });
         for (let i = 0; i < games_raw.length; i++) {
-            if (this.isValidStruct(games_raw[i])) {
-
-                let start;
-                let end;
-                if (games_raw[i].promotions) {
-                    [start, end] = this.getPromoPeriod(games_raw[i].promotions);
-                }
-                if (!start || !end) {
-                    continue;
-                }
-
-                let IdNamespace = await this.findGameIdFromAPI(games_raw[i]);
-
-                let current = new Game(
-                    games_raw[i].title, 
-                    Constants.LAUNCHER.EPIC, 
-                    IdNamespace.id, 
-                    IdNamespace.namespace,
-                    this.getFreeGameUrl(games_raw[i]),
-                    this.getFreeGameOgPrice(games_raw[i]),
-                    start,
-                    end
-                );
-                if (!current_old_ids.includes(IdNamespace.id)) {
-                    Utils.log("New game found on Epic Games: " + current.getLabel());
-                    await current.addToDatabase();
-                    await current.addToCurrent();
-                    try {
-                        const url_thumbnail = await current.fetchThumbnailFromEpicAPI();
-                        if (url_thumbnail) {
-                            await current.placeThumbnailToDatabase(url_thumbnail);
-                        }
-                    } catch (error) {
-                        Utils.log(`Cannot fetch the thumbnail of the game ${current.getLabel()}. Error: ${JSON.stringify(error)}`);
-                    }
-                    games_current.push(current);
-                } else {
-                    Utils.log("Game found but already registered yesterday");
-                    await current.InitIdFromItem();
-                    await current.initFromId(current.getId());
-                    await current.addToCurrent();
-                }
-                current.dump();
+            if (!this.isValidStruct(games_raw[i])) {
+                Utils.log("Invalid struct", games_raw[i].title);
+                continue;
             }
+            let start;
+            let end;
+            if (games_raw[i].promotions) {
+                [start, end] = this.getPromoPeriod(games_raw[i].promotions);
+            }
+            if (!start || !end) {
+                Utils.log("No promotion period found for the game " + games_raw[i].title);
+                continue;
+            }
+
+            let IdNamespace = await this.findGameIdFromAPI(games_raw[i]);
+
+            let current = new Game(
+                games_raw[i].title, 
+                Constants.LAUNCHER.EPIC, 
+                IdNamespace.id, 
+                IdNamespace.namespace,
+                this.getFreeGameUrl(games_raw[i]),
+                this.getFreeGameOgPrice(games_raw[i]),
+                start,
+                end
+            );
+            if (!current_old_ids.includes(IdNamespace.id)) {
+                Utils.log("New game found on Epic Games: " + current.getLabel());
+                await current.addToDatabase();
+                await current.addToCurrent();
+                try {
+                    const url_thumbnail = await current.fetchThumbnailFromEpicAPI();
+                    if (url_thumbnail) {
+                        await current.placeThumbnailToDatabase(url_thumbnail);
+                    }
+                } catch (error) {
+                    Utils.log(`Cannot fetch the thumbnail of the game ${current.getLabel()}. Error: ${JSON.stringify(error)}`);
+                }
+                games_current.push(current);
+            } else {
+                Utils.log("Game found but already registered yesterday");
+                await current.InitIdFromItem();
+                await current.initFromId(current.getId());
+                await current.addToCurrent();
+            }
+            current.dump();
         }
         return games_current;
     }
@@ -194,10 +196,24 @@ class EpicStore {
      * @returns {Boolean}
      */
     isValidStruct(game) {
-        if (game.price && game.price.totalPrice && game.price.totalPrice.discountPrice === 0 && 
-        game.price.totalPrice.originalPrice > 0) {
+        if (
+            game.price && 
+            game.price.totalPrice && 
+            game.price.totalPrice.discountPrice === 0 && 
+            game.price.totalPrice.originalPrice > 0
+        ) {
             return true;    
-        } else if (game.price && game.price.totalPrice && game.price.totalPrice.discountPrice === 0 && game.urlSlug.startsWith("mystery-game")) {
+        } else if (
+            game.price && 
+            game.price.totalPrice && 
+            game.price.totalPrice.discountPrice === 0 && 
+            (
+                game.urlSlug.startsWith("mystery-game") || 
+                game.urlSlug.startsWith("free-game") ||
+                game.urlSlug.startsWith("freegame") ||
+                game.urlSlug.startsWith("mysterygame")
+            )
+        ) {
             return true;
         } else {
             return false;
