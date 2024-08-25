@@ -158,11 +158,13 @@ class Game {
 
                 if (data === undefined) {
                     Utils.log(`Cannot find the thumbnail for the game ${this._id_item} (namespace: ${this._namespace}) in the Epic Games API. GraphQL response: ${JSON.stringify(response.data)}`);
+                    resolve(null);
                     return;
                 }
                 const keyImages = data.keyImages;
                 if (!Array.isArray(keyImages) || keyImages.length === 0) {
                     Utils.log(`Cannot find the thumbnail for the game ${this._id_item} (namespace: ${this._namespace}) in the Epic Games API. (keyImages)`);
+                    resolve(null);
                     return;
                 }
                 keyImages.forEach((keyImage) => {
