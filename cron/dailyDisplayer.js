@@ -7,13 +7,13 @@ const client = new Client({
 const { I18n } = require('i18n');
 const mysql = require('mysql2/promise');
 
-const Utils = require('../functions/utils');
-const GOG = require('../classes/GOG');
-const EpicStore = require('../classes/EpicStore');
-const DiscordUtils = require('../functions/discord_utils');
-const Game = require('../classes/Game');
-const Guild = require('../classes/Guild');
-const Constants = require('../classes/Constants');
+const Utils = require('../src/functions/utils');
+const GOG = require('../src/classes/GOG');
+const EpicStore = require('../src/classes/EpicStore');
+const DiscordUtils = require('../src/functions/discord_utils');
+const Game = require('../src/classes/Game');
+const Guild = require('../src/classes/Guild');
+const Constants = require('../src/classes/Constants');
 
 global.db = mysql.createPool({
     host: process.env.DB_HOST,

@@ -5,3 +5,5 @@ changelog_template.json
 package-lock.json
 README.md
 /tmp
+*.Dockerfile
+.git*

@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 module.exports = Object.freeze({
     DISCORD_TOKEN: process.env.DISCORD_TOKEN ? process.env.DISCORD_TOKEN : null,
     DISCORD_BOT_OWNER: process.env.DISCORD_BOT_OWNER ? process.env.DISCORD_BOT_OWNER : null,
