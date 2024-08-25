@@ -81,7 +81,7 @@ class EpicStore {
         });
         for (let i = 0; i < games_raw.length; i++) {
             if (!this.isValidStruct(games_raw[i])) {
-                Utils.log("Invalid struct", games_raw[i].title);
+                Utils.log(`Invalid struct for ${games_raw[i].title}: ${JSON.stringify(games_raw[i])}`);
                 continue;
             }
             let start;

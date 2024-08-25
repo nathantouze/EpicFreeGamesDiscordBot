@@ -7,6 +7,8 @@ const client = new Client({
 const { I18n } = require('i18n');
 const mysql = require('mysql2/promise');
 
+const path = require("path");
+
 const Utils = require('../src/functions/utils');
 const GOG = require('../src/classes/GOG');
 const EpicStore = require('../src/classes/EpicStore');
@@ -15,14 +17,17 @@ const Game = require('../src/classes/Game');
 const Guild = require('../src/classes/Guild');
 const Constants = require('../src/classes/Constants');
 
-global.db = mysql.createPool({
+
+const db_config = {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
+    port: Number(process.env.DB_PORT),
     database: process.env.DB_DATABASE,
     connectionLimit: 10,
-}).on('connection', () => {
+};
+
+global.db = mysql.createPool(db_config).on('connection', () => {
     Utils.log("Connected to the database !")
 });
 
@@ -31,7 +36,7 @@ var gog = new GOG();
 
 global.i18n = new I18n({
     locales: ['en', 'fr'],
-    directory: __dirname + '../../../locales',
+    directory: path.join(__dirname, "..", "locales")
 });
 global.i18n.setLocale('en');
 

@@ -7,7 +7,7 @@
     "test": "node test.js",
     "start": "node src/index.js",
     "rm": "node src/cron/removeLast.js",
-    "daily": "node src/cron/dailyDisplayer.js",
+    "daily": "node cron/dailyDisplayer.js",
     "cleandb": "node src/cron/db_cleaner.js",
     "bot": "node src/bot.js",
     "test_script": "node scripts/img_url.js"
